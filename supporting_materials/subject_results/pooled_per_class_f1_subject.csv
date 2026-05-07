@@ -1,0 +1,253 @@
+subject,model,model_display,class_name,f1
+1,cfc,CfC-style,left_hand,0.6007604562737643
+1,cfc,CfC-style,right_hand,0.7667731629392971
+1,cfc,CfC-style,feet,0.48056537102473496
+1,cfc,CfC-style,tongue,0.6279863481228669
+1,eegnet,EEGNet,left_hand,0.7593984962406015
+1,eegnet,EEGNet,right_hand,0.851063829787234
+1,eegnet,EEGNet,feet,0.5748987854251012
+1,eegnet,EEGNet,tongue,0.7161290322580646
+1,hybrid_cfc,Hybrid-CfC-style,left_hand,0.7317073170731707
+1,hybrid_cfc,Hybrid-CfC-style,right_hand,0.8295819935691319
+1,hybrid_cfc,Hybrid-CfC-style,feet,0.6142322097378277
+1,hybrid_cfc,Hybrid-CfC-style,tongue,0.7038327526132404
+1,lstm,LSTM,left_hand,0.5639097744360902
+1,lstm,LSTM,right_hand,0.6818181818181818
+1,lstm,LSTM,feet,0.488135593220339
+1,lstm,LSTM,tongue,0.5936395759717314
+1,riemann_tslr,Riemann-TSLR,left_hand,0.7676056338028169
+1,riemann_tslr,Riemann-TSLR,right_hand,0.8109965635738832
+1,riemann_tslr,Riemann-TSLR,feet,0.7552447552447552
+1,riemann_tslr,Riemann-TSLR,tongue,0.7835051546391752
+1,shallow_convnet,Shallow ConvNet,left_hand,0.8357142857142857
+1,shallow_convnet,Shallow ConvNet,right_hand,0.8410596026490066
+1,shallow_convnet,Shallow ConvNet,feet,0.7006802721088435
+1,shallow_convnet,Shallow ConvNet,tongue,0.7391304347826086
+1,tiny_transformer,Tiny-Transformer,left_hand,0.6039215686274509
+1,tiny_transformer,Tiny-Transformer,right_hand,0.7231270358306189
+1,tiny_transformer,Tiny-Transformer,feet,0.44081632653061226
+1,tiny_transformer,Tiny-Transformer,tongue,0.672463768115942
+2,cfc,CfC-style,left_hand,0.32131147540983607
+2,cfc,CfC-style,right_hand,0.10679611650485436
+2,cfc,CfC-style,feet,0.4551282051282051
+2,cfc,CfC-style,tongue,0.3161094224924012
+2,eegnet,EEGNet,left_hand,0.09278350515463918
+2,eegnet,EEGNet,right_hand,0.27848101265822783
+2,eegnet,EEGNet,feet,0.5992779783393501
+2,eegnet,EEGNet,tongue,0.42342342342342343
+2,hybrid_cfc,Hybrid-CfC-style,left_hand,0.1896551724137931
+2,hybrid_cfc,Hybrid-CfC-style,right_hand,0.34527687296416937
+2,hybrid_cfc,Hybrid-CfC-style,feet,0.7058823529411765
+2,hybrid_cfc,Hybrid-CfC-style,tongue,0.3765432098765432
+2,lstm,LSTM,left_hand,0.24060150375939848
+2,lstm,LSTM,right_hand,0.2857142857142857
+2,lstm,LSTM,feet,0.2
+2,lstm,LSTM,tongue,0.2491103202846975
+2,riemann_tslr,Riemann-TSLR,left_hand,0.4199288256227758
+2,riemann_tslr,Riemann-TSLR,right_hand,0.47619047619047616
+2,riemann_tslr,Riemann-TSLR,feet,0.7345454545454545
+2,riemann_tslr,Riemann-TSLR,tongue,0.6026490066225165
+2,shallow_convnet,Shallow ConvNet,left_hand,0.4305555555555556
+2,shallow_convnet,Shallow ConvNet,right_hand,0.5170068027210885
+2,shallow_convnet,Shallow ConvNet,feet,0.6785714285714286
+2,shallow_convnet,Shallow ConvNet,tongue,0.4896551724137931
+2,tiny_transformer,Tiny-Transformer,left_hand,0.24896265560165975
+2,tiny_transformer,Tiny-Transformer,right_hand,0.2939068100358423
+2,tiny_transformer,Tiny-Transformer,feet,0.6298701298701299
+2,tiny_transformer,Tiny-Transformer,tongue,0.4074074074074074
+3,cfc,CfC-style,left_hand,0.7785234899328859
+3,cfc,CfC-style,right_hand,0.8531468531468531
+3,cfc,CfC-style,feet,0.421455938697318
+3,cfc,CfC-style,tongue,0.6775244299674267
+3,eegnet,EEGNet,left_hand,0.8167202572347267
+3,eegnet,EEGNet,right_hand,0.8471337579617835
+3,eegnet,EEGNet,feet,0.34517766497461927
+3,eegnet,EEGNet,tongue,0.7696969696969697
+3,hybrid_cfc,Hybrid-CfC-style,left_hand,0.8657718120805369
+3,hybrid_cfc,Hybrid-CfC-style,right_hand,0.8762541806020067
+3,hybrid_cfc,Hybrid-CfC-style,feet,0.5543071161048689
+3,hybrid_cfc,Hybrid-CfC-style,tongue,0.7430555555555556
+3,lstm,LSTM,left_hand,0.5890909090909091
+3,lstm,LSTM,right_hand,0.7165109034267912
+3,lstm,LSTM,feet,0.4264705882352941
+3,lstm,LSTM,tongue,0.647887323943662
+3,riemann_tslr,Riemann-TSLR,left_hand,0.9059233449477352
+3,riemann_tslr,Riemann-TSLR,right_hand,0.9550173010380623
+3,riemann_tslr,Riemann-TSLR,feet,0.8028169014084507
+3,riemann_tslr,Riemann-TSLR,tongue,0.815068493150685
+3,shallow_convnet,Shallow ConvNet,left_hand,0.9513888888888888
+3,shallow_convnet,Shallow ConvNet,right_hand,0.9333333333333333
+3,shallow_convnet,Shallow ConvNet,feet,0.8092105263157895
+3,shallow_convnet,Shallow ConvNet,tongue,0.850909090909091
+3,tiny_transformer,Tiny-Transformer,left_hand,0.7116104868913857
+3,tiny_transformer,Tiny-Transformer,right_hand,0.7474048442906575
+3,tiny_transformer,Tiny-Transformer,feet,0.4542372881355932
+3,tiny_transformer,Tiny-Transformer,tongue,0.6445182724252492
+4,cfc,CfC-style,left_hand,0.495114006514658
+4,cfc,CfC-style,right_hand,0.31851851851851853
+4,cfc,CfC-style,feet,0.37404580152671757
+4,cfc,CfC-style,tongue,0.40894568690095845
+4,eegnet,EEGNet,left_hand,0.4811594202898551
+4,eegnet,EEGNet,right_hand,0.34375
+4,eegnet,EEGNet,feet,0.3563636363636364
+4,eegnet,EEGNet,tongue,0.43478260869565216
+4,hybrid_cfc,Hybrid-CfC-style,left_hand,0.46060606060606063
+4,hybrid_cfc,Hybrid-CfC-style,right_hand,0.3825503355704698
+4,hybrid_cfc,Hybrid-CfC-style,feet,0.2698412698412698
+4,hybrid_cfc,Hybrid-CfC-style,tongue,0.3382352941176471
+4,lstm,LSTM,left_hand,0.43859649122807015
+4,lstm,LSTM,right_hand,0.2096069868995633
+4,lstm,LSTM,feet,0.38127090301003347
+4,lstm,LSTM,tongue,0.375886524822695
+4,riemann_tslr,Riemann-TSLR,left_hand,0.6549295774647887
+4,riemann_tslr,Riemann-TSLR,right_hand,0.6433566433566433
+4,riemann_tslr,Riemann-TSLR,feet,0.6851211072664359
+4,riemann_tslr,Riemann-TSLR,tongue,0.6348122866894198
+4,shallow_convnet,Shallow ConvNet,left_hand,0.6388888888888888
+4,shallow_convnet,Shallow ConvNet,right_hand,0.6620689655172414
+4,shallow_convnet,Shallow ConvNet,feet,0.6714285714285714
+4,shallow_convnet,Shallow ConvNet,tongue,0.6938775510204082
+4,tiny_transformer,Tiny-Transformer,left_hand,0.5049833887043189
+4,tiny_transformer,Tiny-Transformer,right_hand,0.42657342657342656
+4,tiny_transformer,Tiny-Transformer,feet,0.38022813688212925
+4,tiny_transformer,Tiny-Transformer,tongue,0.4370860927152318
+5,cfc,CfC-style,left_hand,0.4
+5,cfc,CfC-style,right_hand,0.20168067226890757
+5,cfc,CfC-style,feet,0.3197278911564626
+5,cfc,CfC-style,tongue,0.39375
+5,eegnet,EEGNet,left_hand,0.24817518248175183
+5,eegnet,EEGNet,right_hand,0.21138211382113822
+5,eegnet,EEGNet,feet,0.2037735849056604
+5,eegnet,EEGNet,tongue,0.33242506811989103
+5,hybrid_cfc,Hybrid-CfC-style,left_hand,0.2828282828282828
+5,hybrid_cfc,Hybrid-CfC-style,right_hand,0.2222222222222222
+5,hybrid_cfc,Hybrid-CfC-style,feet,0.31007751937984496
+5,hybrid_cfc,Hybrid-CfC-style,tongue,0.16666666666666666
+5,lstm,LSTM,left_hand,0.27586206896551724
+5,lstm,LSTM,right_hand,0.33220338983050846
+5,lstm,LSTM,feet,0.27692307692307694
+5,lstm,LSTM,tongue,0.30996309963099633
+5,riemann_tslr,Riemann-TSLR,left_hand,0.4166666666666667
+5,riemann_tslr,Riemann-TSLR,right_hand,0.40404040404040403
+5,riemann_tslr,Riemann-TSLR,feet,0.41379310344827586
+5,riemann_tslr,Riemann-TSLR,tongue,0.4548736462093863
+5,shallow_convnet,Shallow ConvNet,left_hand,0.348993288590604
+5,shallow_convnet,Shallow ConvNet,right_hand,0.3972602739726027
+5,shallow_convnet,Shallow ConvNet,feet,0.26373626373626374
+5,shallow_convnet,Shallow ConvNet,tongue,0.41522491349480967
+5,tiny_transformer,Tiny-Transformer,left_hand,0.2288135593220339
+5,tiny_transformer,Tiny-Transformer,right_hand,0.3333333333333333
+5,tiny_transformer,Tiny-Transformer,feet,0.21455938697318008
+5,tiny_transformer,Tiny-Transformer,tongue,0.36482084690553745
+6,cfc,CfC-style,left_hand,0.44505494505494503
+6,cfc,CfC-style,right_hand,0.2857142857142857
+6,cfc,CfC-style,feet,0.3882783882783883
+6,cfc,CfC-style,tongue,0.3249097472924188
+6,eegnet,EEGNet,left_hand,0.4619883040935672
+6,eegnet,EEGNet,right_hand,0.22707423580786026
+6,eegnet,EEGNet,feet,0.4429530201342282
+6,eegnet,EEGNet,tongue,0.42402826855123676
+6,hybrid_cfc,Hybrid-CfC-style,left_hand,0.3575757575757576
+6,hybrid_cfc,Hybrid-CfC-style,right_hand,0.2916666666666667
+6,hybrid_cfc,Hybrid-CfC-style,feet,0.2826086956521739
+6,hybrid_cfc,Hybrid-CfC-style,tongue,0.31007751937984496
+6,lstm,LSTM,left_hand,0.3333333333333333
+6,lstm,LSTM,right_hand,0.27309236947791166
+6,lstm,LSTM,feet,0.3951367781155015
+6,lstm,LSTM,tongue,0.34265734265734266
+6,riemann_tslr,Riemann-TSLR,left_hand,0.6122448979591837
+6,riemann_tslr,Riemann-TSLR,right_hand,0.5454545454545454
+6,riemann_tslr,Riemann-TSLR,feet,0.5159010600706714
+6,riemann_tslr,Riemann-TSLR,tongue,0.5536332179930796
+6,shallow_convnet,Shallow ConvNet,left_hand,0.5874125874125874
+6,shallow_convnet,Shallow ConvNet,right_hand,0.5083612040133779
+6,shallow_convnet,Shallow ConvNet,feet,0.5773195876288659
+6,shallow_convnet,Shallow ConvNet,tongue,0.5797101449275363
+6,tiny_transformer,Tiny-Transformer,left_hand,0.43448275862068964
+6,tiny_transformer,Tiny-Transformer,right_hand,0.3771043771043771
+6,tiny_transformer,Tiny-Transformer,feet,0.37209302325581395
+6,tiny_transformer,Tiny-Transformer,tongue,0.3409090909090909
+7,cfc,CfC-style,left_hand,0.3682008368200837
+7,cfc,CfC-style,right_hand,0.4735202492211838
+7,cfc,CfC-style,feet,0.5524475524475524
+7,cfc,CfC-style,tongue,0.6862745098039216
+7,eegnet,EEGNet,left_hand,0.3787878787878788
+7,eegnet,EEGNet,right_hand,0.5634674922600619
+7,eegnet,EEGNet,feet,0.5714285714285714
+7,eegnet,EEGNet,tongue,0.7123287671232876
+7,hybrid_cfc,Hybrid-CfC-style,left_hand,0.43205574912891986
+7,hybrid_cfc,Hybrid-CfC-style,right_hand,0.5017182130584192
+7,hybrid_cfc,Hybrid-CfC-style,feet,0.6188925081433225
+7,hybrid_cfc,Hybrid-CfC-style,tongue,0.6816479400749064
+7,lstm,LSTM,left_hand,0.3785488958990536
+7,lstm,LSTM,right_hand,0.2723404255319149
+7,lstm,LSTM,feet,0.17777777777777778
+7,lstm,LSTM,tongue,0.528
+7,riemann_tslr,Riemann-TSLR,left_hand,0.7157894736842105
+7,riemann_tslr,Riemann-TSLR,right_hand,0.7379310344827587
+7,riemann_tslr,Riemann-TSLR,feet,0.8098591549295775
+7,riemann_tslr,Riemann-TSLR,tongue,0.7918088737201365
+7,shallow_convnet,Shallow ConvNet,left_hand,0.7481481481481481
+7,shallow_convnet,Shallow ConvNet,right_hand,0.7840531561461794
+7,shallow_convnet,Shallow ConvNet,feet,0.8551724137931035
+7,shallow_convnet,Shallow ConvNet,tongue,0.852233676975945
+7,tiny_transformer,Tiny-Transformer,left_hand,0.4788732394366197
+7,tiny_transformer,Tiny-Transformer,right_hand,0.4874551971326165
+7,tiny_transformer,Tiny-Transformer,feet,0.6174496644295302
+7,tiny_transformer,Tiny-Transformer,tongue,0.6872852233676976
+8,cfc,CfC-style,left_hand,0.7291666666666666
+8,cfc,CfC-style,right_hand,0.754325259515571
+8,cfc,CfC-style,feet,0.49640287769784175
+8,cfc,CfC-style,tongue,0.7205387205387206
+8,eegnet,EEGNet,left_hand,0.7333333333333333
+8,eegnet,EEGNet,right_hand,0.7676767676767676
+8,eegnet,EEGNet,feet,0.5
+8,eegnet,EEGNet,tongue,0.7929824561403509
+8,hybrid_cfc,Hybrid-CfC-style,left_hand,0.7581699346405228
+8,hybrid_cfc,Hybrid-CfC-style,right_hand,0.815068493150685
+8,hybrid_cfc,Hybrid-CfC-style,feet,0.5869565217391305
+8,hybrid_cfc,Hybrid-CfC-style,tongue,0.762589928057554
+8,lstm,LSTM,left_hand,0.6549295774647887
+8,lstm,LSTM,right_hand,0.5951557093425606
+8,lstm,LSTM,feet,0.3404255319148936
+8,lstm,LSTM,tongue,0.632996632996633
+8,riemann_tslr,Riemann-TSLR,left_hand,0.8268551236749117
+8,riemann_tslr,Riemann-TSLR,right_hand,0.8327402135231317
+8,riemann_tslr,Riemann-TSLR,feet,0.7959866220735786
+8,riemann_tslr,Riemann-TSLR,tongue,0.8858131487889274
+8,shallow_convnet,Shallow ConvNet,left_hand,0.8571428571428571
+8,shallow_convnet,Shallow ConvNet,right_hand,0.852233676975945
+8,shallow_convnet,Shallow ConvNet,feet,0.7071428571428572
+8,shallow_convnet,Shallow ConvNet,tongue,0.8027210884353742
+8,tiny_transformer,Tiny-Transformer,left_hand,0.7692307692307693
+8,tiny_transformer,Tiny-Transformer,right_hand,0.7272727272727273
+8,tiny_transformer,Tiny-Transformer,feet,0.4927536231884058
+8,tiny_transformer,Tiny-Transformer,tongue,0.73992673992674
+9,cfc,CfC-style,left_hand,0.8106312292358804
+9,cfc,CfC-style,right_hand,0.5376344086021505
+9,cfc,CfC-style,feet,0.4876325088339223
+9,cfc,CfC-style,tongue,0.7058823529411765
+9,eegnet,EEGNet,left_hand,0.8267477203647416
+9,eegnet,EEGNet,right_hand,0.6742424242424242
+9,eegnet,EEGNet,feet,0.7215686274509804
+9,eegnet,EEGNet,tongue,0.8486842105263158
+9,hybrid_cfc,Hybrid-CfC-style,left_hand,0.8767123287671232
+9,hybrid_cfc,Hybrid-CfC-style,right_hand,0.6125
+9,hybrid_cfc,Hybrid-CfC-style,feet,0.4860557768924303
+9,hybrid_cfc,Hybrid-CfC-style,tongue,0.7750865051903114
+9,lstm,LSTM,left_hand,0.6606060606060606
+9,lstm,LSTM,right_hand,0.35714285714285715
+9,lstm,LSTM,feet,0.34782608695652173
+9,lstm,LSTM,tongue,0.7192429022082019
+9,riemann_tslr,Riemann-TSLR,left_hand,0.7285223367697594
+9,riemann_tslr,Riemann-TSLR,right_hand,0.6020761245674741
+9,riemann_tslr,Riemann-TSLR,feet,0.6690140845070423
+9,riemann_tslr,Riemann-TSLR,tongue,0.8194444444444444
+9,shallow_convnet,Shallow ConvNet,left_hand,0.8813559322033898
+9,shallow_convnet,Shallow ConvNet,right_hand,0.7087719298245614
+9,shallow_convnet,Shallow ConvNet,feet,0.8098591549295775
+9,shallow_convnet,Shallow ConvNet,tongue,0.8263888888888888
+9,tiny_transformer,Tiny-Transformer,left_hand,0.7947019867549668
+9,tiny_transformer,Tiny-Transformer,right_hand,0.5647840531561462
+9,tiny_transformer,Tiny-Transformer,feet,0.5772357723577236
+9,tiny_transformer,Tiny-Transformer,tongue,0.7788778877887789

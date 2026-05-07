@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "note": "Holm correction in this file is applied within the recurrent-only control family {cfc_vs_gru, gru_vs_lstm, cfc_vs_lstm}. This differs from pooled_stats.csv and sessionwise_stats.csv, where Holm correction is applied within the full benchmark family.",
+    "pooled_family": [
+      "cfc_vs_gru",
+      "gru_vs_lstm",
+      "cfc_vs_lstm"
+    ],
+    "sessionwise_family": [
+      "cfc_vs_gru",
+      "gru_vs_lstm",
+      "cfc_vs_lstm"
+    ]
+  },
+  "pooled": {
+    "cfc_vs_gru": {
+      "t_statistic": 3.688028778596691,
+      "p_value": 0.006147628636725849,
+      "cohen_d": 1.2293429221370042,
+      "wilcoxon_statistic": 2.0,
+      "wilcoxon_p_value": 0.01171875,
+      "mean_diff": 3.720639680159918,
+      "n_subjects": 9,
+      "holm_p_value": 0.006147628636725849,
+      "wilcoxon_holm_p_value": 0.015625
+    },
+    "gru_vs_lstm": {
+      "t_statistic": 4.2341616294170095,
+      "p_value": 0.002860106840833109,
+      "cohen_d": 1.4113872046482216,
+      "wilcoxon_statistic": 1.0,
+      "wilcoxon_p_value": 0.0078125,
+      "mean_diff": 3.8624021322671984,
+      "n_subjects": 9,
+      "holm_p_value": 0.005720213681666218,
+      "wilcoxon_holm_p_value": 0.015625
+    },
+    "cfc_vs_lstm": {
+      "t_statistic": 5.072779876874538,
+      "p_value": 0.0009616905211739223,
+      "cohen_d": 1.6909266218542844,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 7.583041812427116,
+      "n_subjects": 9,
+      "holm_p_value": 0.002885071563521767,
+      "wilcoxon_holm_p_value": 0.01171875
+    }
+  },
+  "sessionwise": {
+    "cfc_vs_gru": {
+      "t_statistic": 2.124775914356676,
+      "p_value": 0.06633024393745778,
+      "cohen_d": 0.7082586368186662,
+      "wilcoxon_statistic": 4.5,
+      "wilcoxon_p_value": 0.03125,
+      "mean_diff": 3.858024691358023,
+      "n_subjects": 9,
+      "holm_p_value": 0.13266048787491555,
+      "wilcoxon_holm_p_value": 0.0625
+    },
+    "gru_vs_lstm": {
+      "t_statistic": 1.341672489910599,
+      "p_value": 0.2165374465350078,
+      "cohen_d": 0.4472241621765232,
+      "wilcoxon_statistic": 12.5,
+      "wilcoxon_p_value": 0.26171875,
+      "mean_diff": 1.7746913580246941,
+      "n_subjects": 9,
+      "holm_p_value": 0.2165374465350078,
+      "wilcoxon_holm_p_value": 0.26171875
+    },
+    "cfc_vs_lstm": {
+      "t_statistic": 3.5127223807011054,
+      "p_value": 0.007929914652069525,
+      "cohen_d": 1.1709074577996643,
+      "wilcoxon_statistic": 2.0,
+      "wilcoxon_p_value": 0.01171875,
+      "mean_diff": 5.632716049382718,
+      "n_subjects": 9,
+      "holm_p_value": 0.023789743956208573,
+      "wilcoxon_holm_p_value": 0.03515625
+    }
+  }
+}

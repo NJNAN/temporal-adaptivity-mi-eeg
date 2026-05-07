@@ -1,0 +1,133 @@
+{
+  "generated_at": "2026-03-22 14:40:21",
+  "device": "cuda",
+  "config": {
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "models": [
+      "shallow_convnet",
+      "riemann_tslr",
+      "eegnet",
+      "cfc",
+      "lstm"
+    ],
+    "epochs": 80,
+    "patience": 20,
+    "min_epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "val_fraction": 0.15,
+    "seed": 20260320,
+    "cfc_hidden_size": 128,
+    "lstm_hidden_size": 128,
+    "downsample_factor": 2,
+    "shuffle_repeats": 5,
+    "device": "cuda",
+    "data_dir": "data",
+    "output_dir": "outputs/bspc_temporal_shuffle"
+  },
+  "summary": {
+    "shallow_convnet": {
+      "clean_accuracy_mean": 61.72839506172839,
+      "shuffle_accuracy_mean": 33.79629629629629,
+      "accuracy_drop_mean": 27.932098765432098,
+      "accuracy_drop_ci95_low": 20.53343112152639,
+      "accuracy_drop_ci95_high": 35.330766409337805
+    },
+    "riemann_tslr": {
+      "clean_accuracy_mean": 62.80864197530863,
+      "shuffle_accuracy_mean": 62.80864197530863,
+      "accuracy_drop_mean": 7.894919286223335e-16,
+      "accuracy_drop_ci95_low": -1.0310797234910797e-15,
+      "accuracy_drop_ci95_high": 2.6100635807357467e-15
+    },
+    "eegnet": {
+      "clean_accuracy_mean": 46.257716049382715,
+      "shuffle_accuracy_mean": 33.14043209876543,
+      "accuracy_drop_mean": 13.117283950617285,
+      "accuracy_drop_ci95_low": 4.252413927890794,
+      "accuracy_drop_ci95_high": 21.982153973343777
+    },
+    "cfc": {
+      "clean_accuracy_mean": 43.711419753086425,
+      "shuffle_accuracy_mean": 30.941358024691358,
+      "accuracy_drop_mean": 12.770061728395063,
+      "accuracy_drop_ci95_low": 4.919137818226381,
+      "accuracy_drop_ci95_high": 20.620985638563745
+    },
+    "lstm": {
+      "clean_accuracy_mean": 37.692901234567906,
+      "shuffle_accuracy_mean": 27.01388888888889,
+      "accuracy_drop_mean": 10.679012345679013,
+      "accuracy_drop_ci95_low": 4.531659750385534,
+      "accuracy_drop_ci95_high": 16.826364940972493
+    }
+  },
+  "paired_tests": {
+    "clean_vs_shuffle_cfc": {
+      "t_statistic": 3.7508725711059356,
+      "p_value": 0.005617210562217305,
+      "cohen_d": 1.2502908558111774,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 12.770061728395063,
+      "n_subjects": 9,
+      "holm_p_value": 0.016851631686651915,
+      "wilcoxon_holm_p_value": 0.01953125
+    },
+    "clean_vs_shuffle_eegnet": {
+      "t_statistic": 3.412177612894929,
+      "p_value": 0.009193520578996351,
+      "cohen_d": 1.137392536645416,
+      "wilcoxon_statistic": 1.0,
+      "wilcoxon_p_value": 0.0078125,
+      "mean_diff": 13.117283950617285,
+      "n_subjects": 9,
+      "holm_p_value": 0.018387041157992702,
+      "wilcoxon_holm_p_value": 0.01953125
+    },
+    "clean_vs_shuffle_lstm": {
+      "t_statistic": 4.005927144619315,
+      "p_value": 0.003917243549798766,
+      "cohen_d": 1.3353090465367612,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 10.679012345679013,
+      "n_subjects": 9,
+      "holm_p_value": 0.015668974199195065,
+      "wilcoxon_holm_p_value": 0.01953125
+    },
+    "clean_vs_shuffle_riemann_tslr": {
+      "t_statistic": 1.0,
+      "p_value": 0.34659350708733416,
+      "cohen_d": 7.894917416331262e-08,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 1.0,
+      "mean_diff": 7.894919286223335e-16,
+      "n_subjects": 9,
+      "holm_p_value": 0.34659350708733416,
+      "wilcoxon_holm_p_value": 1.0
+    },
+    "clean_vs_shuffle_shallow_convnet": {
+      "t_statistic": 8.70582898950373,
+      "p_value": 2.3643846845795213e-05,
+      "cohen_d": 2.9019429934863346,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 27.932098765432098,
+      "n_subjects": 9,
+      "holm_p_value": 0.00011821923422897606,
+      "wilcoxon_holm_p_value": 0.01953125
+    }
+  }
+}

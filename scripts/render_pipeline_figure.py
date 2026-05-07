@@ -1,3 +1,11 @@
+"""渲染论文流程图的辅助脚本。
+
+对应论文方法部分的整体 pipeline 示意：
+原始 MI-EEG、共享预处理、候选模型库和四分类输出。
+
+虽然正文最终压版后未必保留该图，本脚本仍作为补充材料和制图资产保留。
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -25,6 +33,7 @@ SLATE_LIGHT = colors.HexColor("#E5EAF5")
 
 
 def fit_text(c: canvas.Canvas, text: str, font_name: str, max_size: float, width: float) -> float:
+    """自适应字号，保证流程图中的文字在双栏缩放后仍可读。"""
     size = max_size
     while size > 6 and stringWidth(text, font_name, size) > width:
         size -= 0.25
@@ -47,6 +56,7 @@ def rounded_box(
     body_size: float = 8.4,
     radius: float = 14,
 ) -> None:
+    """绘制流程图中的圆角模块，对应论文方法图中的功能块。"""
     c.setFillColor(fill_color)
     c.setStrokeColor(stroke_color)
     c.setLineWidth(1.0)
@@ -67,6 +77,7 @@ def rounded_box(
 
 
 def arrow(c: canvas.Canvas, x1: float, y1: float, x2: float, y2: float, color=ACCENT, width: float = 2.0) -> None:
+    """绘制流程箭头，用来表达论文方法里的处理顺序。"""
     c.setStrokeColor(color)
     c.setFillColor(color)
     c.setLineWidth(width)
@@ -96,6 +107,7 @@ def arrow(c: canvas.Canvas, x1: float, y1: float, x2: float, y2: float, color=AC
 
 
 def model_chip(c: canvas.Canvas, x: float, y: float, w: float, h: float, text: str, fill_color) -> None:
+    """绘制模型标签，标出论文比较的不同 baseline。"""
     c.setFillColor(fill_color)
     c.setStrokeColor(colors.white)
     c.setLineWidth(1)
@@ -108,6 +120,7 @@ def model_chip(c: canvas.Canvas, x: float, y: float, w: float, h: float, text: s
 
 
 def draw_bracket(c: canvas.Canvas, x: float, y: float, w: float, h: float, label: str) -> None:
+    """绘制分组括号，用于区分输入预处理与模型解码模块。"""
     c.setStrokeColor(LINE)
     c.setLineWidth(1.2)
     c.line(x, y + h, x, y)
@@ -119,6 +132,7 @@ def draw_bracket(c: canvas.Canvas, x: float, y: float, w: float, h: float, label
 
 
 def render_pipeline(output_path: Path) -> None:
+    """生成 MI-EEG 流程图，对应论文方法部分的总体管线说明。"""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     c = canvas.Canvas(str(output_path), pagesize=(PAGE_WIDTH, PAGE_HEIGHT))
 

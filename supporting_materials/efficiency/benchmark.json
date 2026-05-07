@@ -1,0 +1,133 @@
+[
+  {
+    "model": "shallow_convnet",
+    "model_display": "Shallow ConvNet",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 40604,
+    "forward_ms": 3.4864700000071025,
+    "train_step_ms": 76.07348999999886,
+    "peak_memory_mb": 2635.05078125
+  },
+  {
+    "model": "eegnet",
+    "model_display": "EEGNet",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 2420,
+    "forward_ms": 2.2888325000167242,
+    "train_step_ms": 8.316119999972216,
+    "peak_memory_mb": 89.64990234375
+  },
+  {
+    "model": "tiny_transformer",
+    "model_display": "Tiny-Transformer",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 101124,
+    "forward_ms": 19.785042500006966,
+    "train_step_ms": 73.19884749999801,
+    "peak_memory_mb": 282.5537109375
+  },
+  {
+    "model": "hybrid_cfc",
+    "model_display": "Hybrid-CfC-style",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 86964,
+    "forward_ms": 28.835914999990564,
+    "train_step_ms": 87.92945499999405,
+    "peak_memory_mb": 90.93896484375
+  },
+  {
+    "model": "cfc",
+    "model_display": "CfC-style",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 86788,
+    "forward_ms": 407.0924424999703,
+    "train_step_ms": 735.0914575000388,
+    "peak_memory_mb": 290.2490234375
+  },
+  {
+    "model": "lstm",
+    "model_display": "LSTM",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 210948,
+    "forward_ms": 8.181967500013343,
+    "train_step_ms": 19.23476000001756,
+    "peak_memory_mb": 581.2080078125
+  },
+  {
+    "model": "shallow_convnet",
+    "model_display": "Shallow ConvNet",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 40604,
+    "forward_ms": 0.2679733333328234,
+    "train_step_ms": 2.252648333342222,
+    "peak_memory_mb": 61.44970703125
+  },
+  {
+    "model": "eegnet",
+    "model_display": "EEGNet",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 2420,
+    "forward_ms": 0.6699183333391071,
+    "train_step_ms": 2.70780000000741,
+    "peak_memory_mb": 19.03369140625
+  },
+  {
+    "model": "tiny_transformer",
+    "model_display": "Tiny-Transformer",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 101124,
+    "forward_ms": 1.0929699999906006,
+    "train_step_ms": 6.089743333359365,
+    "peak_memory_mb": 22.77685546875
+  },
+  {
+    "model": "hybrid_cfc",
+    "model_display": "Hybrid-CfC-style",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 86964,
+    "forward_ms": 11.000343333338,
+    "train_step_ms": 36.048661666670036,
+    "peak_memory_mb": 20.23046875
+  },
+  {
+    "model": "cfc",
+    "model_display": "CfC-style",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 86788,
+    "forward_ms": 155.43060500000743,
+    "train_step_ms": 524.4071783333311,
+    "peak_memory_mb": 23.087890625
+  },
+  {
+    "model": "lstm",
+    "model_display": "LSTM",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 210948,
+    "forward_ms": 3.136421666658862,
+    "train_step_ms": 5.562071666675668,
+    "peak_memory_mb": 29.86328125
+  },
+  {
+    "model": "riemann_tslr",
+    "model_display": "Riemann-TSLR",
+    "device": "cpu",
+    "batch_size": 1,
+    "params": 1016,
+    "forward_ms": 0.6864839999980177,
+    "train_step_ms": NaN,
+    "peak_memory_mb": NaN,
+    "best_c": 1.0
+  }
+]

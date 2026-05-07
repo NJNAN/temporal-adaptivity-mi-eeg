@@ -1,0 +1,177 @@
+\documentclass[journal]{IEEEtran}
+
+\ifCLASSINFOpdf
+\else
+   \usepackage[dvips]{graphicx}
+\fi
+\usepackage{url}
+\hyphenation{op-tical net-works semi-conduc-tor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage{booktabs}
+\setlength{\textfloatsep}{7pt plus 1pt minus 2pt}
+\setlength{\floatsep}{6pt plus 1pt minus 2pt}
+\setlength{\intextsep}{6pt plus 1pt minus 2pt}
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\belowdisplayskip}{5pt}
+
+\begin{document}
+\title{On the Limits of Temporal Adaptivity in MI-EEG Decoding}
+
+\author{Junlin~Huang%
+\thanks{Junlin Huang is with the School of Computing and Information Science, Fuzhou Institute of Technology, Fuzhou, Fujian, China (e-mail: junlinhuang2026@163.com).}}
+
+\markboth{IEEE Signal Processing Letters,~Vol.~XX, No.~XX, March~XX}%
+{Huang: Continuous-Time Modeling for MI-EEG Decoding}
+\maketitle
+
+\begin{abstract}
+This letter tests a common assumption in motor imagery EEG decoding: if temporal dynamics are a dominant source of class information, then continuous-time recurrent models should materially improve discrimination and expose class-informative time scales. On BCI Competition IV-2a, we compare a CfC-style recurrent model and a minimal Hybrid-CfC-style diagnostic variant against LSTM, a lightweight Tiny-Transformer, EEGNet, Shallow ConvNet, and a compact Riemann-TSLR baseline under shared preprocessing, training-only standardization, matched model selection, pooled and grouped-pooled cross-validation, and a full session-wise split. Shallow ConvNet and Riemann-TSLR are strongest across protocols; CfC-style stays above LSTM numerically and significantly so in pooled and grouped controls, but neither CfC-style nor Tiny-Transformer closes the gap to the spatial/geometric top tier. The learned time constants $\tau$ reveal adaptive temporal regimes but not stable class-discriminative information: class distributions overlap, Friedman testing is not significant, and $\tau$--$\mu/\beta$ correlations vanish in the stricter session-wise analysis. An auxiliary binary-MI check on BNCI2014-004 shows the same broad picture. Overall, temporal adaptivity helps optimization but does not appear to constitute a primary source of class-discriminative information; performance aligns more with spatial--spectral inductive bias than with temporal modeling capacity.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Motor imagery EEG, closed-form continuous-time neural networks, brain-computer interface, temporal dynamics, interpretability
+\end{IEEEkeywords}
+
+\IEEEpeerreviewmaketitle
+
+\section{Introduction}
+
+\IEEEPARstart{M}{otor} imagery (MI) based brain-computer interfaces translate covert movement intentions in EEG into control signals \cite{wolpaw2002brain}. Because MI-EEG is non-stationary and exhibits ERD/ERS-like temporal dynamics \cite{pfurtscheller1999erd}, it is natural to assume that stronger temporal modeling should materially improve discrimination.
+
+Compact CNNs such as EEGNet and Shallow ConvNet remain strong MI baselines, whereas standard recurrent models often lag behind \cite{lawhern2018eegnet,schirrmeister2017deep}. Continuous-time models such as LTC and canonical CfC expose adaptive time scales directly \cite{hasani2021ltc,hasani2022cfc}, but most EEG evidence still comes from binary or efficiency-oriented settings rather than standard four-class MI benchmarks \cite{chen2025nsa}. Recent MI decoders also include FBCSP, compact temporal CNNs, selective SSMs such as MI-Mamba, convolution-transformer hybrids such as DBConformer, and graph/geometric models such as Graph-CSPNet and GAH-TNet \cite{ang2008fbcsp,ang2012fbcsp2a2b,ingolfsson2020eegtcnet,elouahidi2024simpleconv,guo2025mimamba,wang2025dbconformer,li2024ctnet,han2024eegcct,ju2022graphcspnet,han2025gahtnet}, yet these usually inject stronger spectral, spatial, or topological priors rather than isolating temporal adaptivity itself. The sharper question is therefore whether temporal adaptivity itself is a major source of discriminative power in standard MI-EEG.
+
+We test that claim directly on IV-2a under matched preprocessing, optimization, and model selection, plus an auxiliary binary-MI check on BNCI2014-004. The main boundary is simple: sequence models improve over basic recurrent baselines, but the strongest results still come from compact spatial and geometric models, and $\tau$ does not translate into stable class discriminability under the stricter session-wise protocol.
+
+\section{Models Under Test}
+
+\subsection{CfC-style Unit}
+The recurrent unit is a CfC-style exponential-decay update motivated by canonical CfC \cite{hasani2022cfc}. The raw EEG sample at time step $t$ is first projected to $\mathbf{z}_t \in \mathbb{R}^{H}$, and the hidden state $\mathbf{h}_t \in \mathbb{R}^{H}$ is updated through
+\begin{align}
+\tilde{\mathbf{h}}_t &= \tanh\!\left(\mathbf{W}_c[\mathbf{z}_t; \mathbf{h}_{t-1}] + \mathbf{b}_c\right), \\
+\boldsymbol{\tau}_t &= \mathrm{softplus}\!\left(\mathbf{W}_{\tau,2}\,\phi\!\left(\mathbf{W}_{\tau,1}[\mathbf{z}_t; \mathbf{h}_{t-1}] + \mathbf{b}_{\tau,1}\right) + \mathbf{b}_{\tau,2}\right) + \epsilon, \\
+\mathbf{h}_t &= \exp(-\Delta t / \boldsymbol{\tau}_t) \odot \mathbf{h}_{t-1}
++ \left(1 - \exp(-\Delta t / \boldsymbol{\tau}_t)\right) \odot \tilde{\mathbf{h}}_t ,
+\end{align}
+where $\phi(\cdot)$ is SiLU, $\epsilon = 10^{-3}$ enforces positivity, and $\boldsymbol{\tau}_t \in \mathbb{R}^{H}$ is per-unit and input-dependent. We set $\Delta t = 1.0$, so $\tau$ is interpreted as a relative temporal scale in sample steps. Layer normalization is applied to $[\mathbf{z}_t; \mathbf{h}_{t-1}]$ before a candidate head $2H \rightarrow H$ and a $\tau$ head $2H \rightarrow H \rightarrow H$. This is a practical CfC-style exponential-decay variant rather than a claim about every canonical CfC form.
+
+\subsection{Baselines}
+We compare five baselines. LSTM \cite{hochreiter1997long} is the discrete-time recurrent reference. Tiny-Transformer uses a 64-dimensional input projection, learned positional embeddings, two 4-head encoder blocks, and temporal mean-max pooling as a compact attention baseline. EEGNet \cite{lawhern2018eegnet} is the compact CNN baseline. Shallow ConvNet \cite{schirrmeister2017deep} serves as a stronger band-power-oriented CNN. Riemann-TSLR computes OAS covariance matrices, maps them to the Riemannian tangent space, standardizes tangent features on the training split only, and classifies them with multinomial logistic regression.
+
+To test whether pure CfC-style dynamics mainly lack spatial inductive bias, we introduce a lightweight Hybrid-CfC-style baseline. It uses a shallow EEGNet-style frontend with 8 temporal filters, a depthwise spatial convolution across all 22 electrodes, a compact separable temporal block, average pooling, and frontend dropout 0.25, followed by a 128-dimensional CfC-style module and a linear head. This design is diagnostic rather than a full hybrid architecture search.
+
+\section{Evidence on IV-2a}
+
+\subsection{Dataset and Setup}
+We evaluate on BCI Competition IV Dataset 2a \cite{tangermann2012bci4}, which contains 9 subjects, four MI classes, 22 channels, and 250 Hz sampling. We use the standard 2--6 s post-cue window, implemented as 0--4 s relative to MI onset in MOABB. The primary pooled protocol uses trial-level 5-fold cross-validation after session pooling, with training-only normalization. To limit residual within-run similarity, we also report a grouped pooled control using session-plus-run groups in the outer split; each subject contributes 12 groups (2 sessions $\times$ 6 runs). We further report the standard session-wise split that trains on session 1 and tests on session 2.
+
+All neural models are implemented in PyTorch; Riemann-TSLR uses pyRiemann and scikit-learn. Signals are filtered to 8--30 Hz, downsampled to 125 Hz, standardized per channel with training-only statistics, and clipped to $[-6,6]$. CfC-style uses hidden size 128 with the input-dependent $\tau$ head in (2). CfC-style, LSTM, a supplementary GRU control, and Tiny-Transformer all use temporal mean-max pooling. LSTM and GRU use two recurrent layers with 128 hidden units and dropout 0.4; Tiny-Transformer uses width 64, two encoder layers, four heads, and dropout 0.2. EEGNet and Shallow ConvNet follow their compact canonical settings \cite{lawhern2018eegnet,schirrmeister2017deep}. Riemann-TSLR uses OAS covariance estimation, tangent-space projection, train-only feature standardization, and multinomial logistic regression with $C \in \{0.1,1,10\}$ selected on the same validation split as the neural models. Parameter counts are 1.0k (Riemann-TSLR), 2.4k (EEGNet), 40.6k (Shallow), 86.8k (CfC-style), 87.0k (Hybrid-CfC-style), 101.1k (Tiny-Transformer), 158.5k (GRU), and 210.9k (LSTM). Neural models use Adam, learning rate $10^{-3}$, weight decay $10^{-4}$, cosine annealing, gradient clipping 1.0, batch size 64, and early stopping after a 25-epoch warm-up within an 80-epoch budget. We report subject-level paired $t$-tests, Wilcoxon signed-rank tests, and Holm correction. We also run a binary-MI auxiliary check on BNCI2014-004 (train sessions 0/1/2, test sessions 3/4) and keep it supplementary to the IV-2a boundary claim.
+
+\subsection{Classification Results}
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Pooled 5-fold results on BCI Competition IV-2a (mean $\pm$ std across 9 subjects).}
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Model} & \textbf{Params} & \textbf{Accuracy (\%)} & \textbf{F1 Score} \\
+    \midrule
+    Shallow ConvNet \cite{schirrmeister2017deep} & 40.6k & 68.9 $\pm$ 17.4 & 0.687 $\pm$ 0.176 \\
+    Riemann-TSLR & 1.0k & 68.3 $\pm$ 14.8 & 0.681 $\pm$ 0.149 \\
+    EEGNet \cite{lawhern2018eegnet} & 2.4k & 55.1 $\pm$ 19.3 & 0.531 $\pm$ 0.199 \\
+    Hybrid-CfC-style & 87.0k & 53.6 $\pm$ 20.1 & 0.525 $\pm$ 0.207 \\
+    Tiny-Transformer & 101.1k & 52.4 $\pm$ 14.6 & 0.513 $\pm$ 0.152 \\
+    CfC-style & 86.8k & 50.9 $\pm$ 15.3 & 0.494 $\pm$ 0.165 \\
+    LSTM \cite{hochreiter1997long} & 210.9k & 43.3 $\pm$ 13.6 & 0.408 $\pm$ 0.153 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:results}
+\end{table}
+
+The highest pooled accuracy is achieved by Shallow ConvNet (68.9\%, 0.687) and Riemann-TSLR (68.3\%, 0.681), whose difference is not significant ($p = 0.694$). The top tier is therefore not simply ``CNN versus continuous-time'', but a compact band-power CNN plus a compact geometric baseline.
+
+Among the sequence models, Hybrid-CfC-style (53.6\%) and Tiny-Transformer (52.4\%) sit near EEGNet (55.1\%), while CfC-style reaches 50.9\% accuracy and 0.494 macro F1. CfC-style remains significantly above LSTM (43.3\%, 0.408), with Holm-adjusted $p = 0.013$ and Cohen's $d = 1.691$, and Tiny-Transformer also exceeds LSTM after Holm correction ($p = 0.039$). Neither EEGNet versus Tiny-Transformer, EEGNet versus Hybrid-CfC-style, nor Tiny-Transformer versus CfC-style is significant. The grouped pooled control preserves the same structure across all seven models: Riemann-TSLR 67.8\%, Shallow 66.2\%, EEGNet 52.8\%, Hybrid-CfC-style 52.1\%, Tiny-Transformer 51.8\%, CfC-style 48.1\%, and LSTM 41.1\%. Under this grouped control, Shallow and Riemann remain indistinguishable ($p = 0.478$), EEGNet, Hybrid-CfC-style, and Tiny-Transformer remain statistically tied, and CfC-style, Hybrid-CfC-style, and Tiny-Transformer all exceed LSTM after Holm correction ($p = 0.019$, $0.032$, and $0.001$). A supplementary GRU control reaches 47.2\% pooled accuracy and 40.4\% session-wise accuracy; CfC-style remains above GRU in pooled CV (Holm-adjusted $p = 0.006$), but not after Holm correction in the session-wise setting ($p = 0.133$). The pooled evidence therefore supports a task-level regularity: performance aligns more consistently with spatial or geometric inductive bias than with temporal adaptivity alone, suggesting that task structure, rather than model temporal expressiveness, governs performance. The same pattern argues against a simple capacity explanation: the 101.1k-parameter Tiny-Transformer and 86.8k-parameter CfC-style do not exceed the 1.0k Riemann-TSLR or the 40.6k Shallow ConvNet, indicating that performance is limited more by inductive-bias alignment than by raw model size.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Session-wise evaluation (train session 1, test session 2).}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Model} & \textbf{Accuracy (\%)} & \textbf{F1 Score} \\
+    \midrule
+    Riemann-TSLR & 62.8 $\pm$ 12.7 & 0.617 $\pm$ 0.135 \\
+    Shallow ConvNet & 61.7 $\pm$ 14.8 & 0.609 $\pm$ 0.149 \\
+    Hybrid-CfC-style & 48.1 $\pm$ 16.0 & 0.463 $\pm$ 0.156 \\
+    Tiny-Transformer & 46.4 $\pm$ 11.9 & 0.433 $\pm$ 0.125 \\
+    EEGNet & 46.3 $\pm$ 14.9 & 0.431 $\pm$ 0.148 \\
+    CfC-style & 44.2 $\pm$ 11.9 & 0.414 $\pm$ 0.126 \\
+    LSTM & 38.6 $\pm$ 10.3 & 0.356 $\pm$ 0.118 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:sessionwise}
+\end{table}
+
+Table \ref{tab:sessionwise} is the stricter primary generalization check and uses the main session-wise run. Accuracy decreases under this harder protocol, but the ranking remains stable at the top: Shallow ConvNet and Riemann-TSLR again form the leading pair, with no significant difference between them ($p = 0.535$). Below them, Hybrid-CfC-style, Tiny-Transformer, EEGNet, and CfC-style form a compressed middle tier, while LSTM remains last. Under Holm correction, Tiny-Transformer exceeds both LSTM ($p = 0.008$) and CfC-style ($p = 0.003$), whereas CfC-style no longer exceeds LSTM after correction ($p = 0.071$). The stricter session-wise result therefore sharpens, rather than weakens, the main boundary: even when stronger sequence modeling is added, the ceiling is still set by compact spatial or geometric priors rather than temporal adaptivity alone.
+
+As a limited stability sanity check, two additional clean repeats with repeat seeds 42 and 43 rerun the five-model subset under the same session-wise protocol and preserve the same ordering, with seed-level standard deviation of subject-mean accuracy below 2 percentage points for every model. A supplementary temporal-shuffle control sharpens the same point: randomizing within-trial order at test time leaves the order-invariant Riemann-TSLR unchanged, but reduces Shallow ConvNet by 27.9 percentage points, EEGNet by 13.1, CfC-style by 12.8, and LSTM by 10.7, indicating that temporal order itself is not the limiting factor for class discrimination in this task. Once session transfer is enforced, performance still tracks spatial and geometric bias much more than adaptive recurrence alone.
+
+As a limited external-consistency check, a supplementary binary-MI experiment on BNCI2014-004 again leaves Shallow ConvNet first (80.1\%) and EEGNet second (78.3\%), while Riemann-TSLR, Tiny-Transformer, CfC-style, and LSTM cluster near 73\%. This auxiliary result does not justify expanding the main claim beyond IV-2a, but it is directionally consistent with the same boundary: compact spatial or geometric priors remain the most reliable source of performance.
+
+\subsection{Temporal Adaptivity versus Class Discriminability}
+CfC-style exposes explicit, sample-wise time constants. If temporal adaptivity itself encoded class-discriminative information, then the learned $\tau$ values should separate the four classes and align with class-dependent spectral markers under the stricter session-wise protocol. For the analysis below, we first average $\tau$ over hidden units and time steps to obtain one trial-wise value, then average within subject and class, yielding $9 \times 4 = 36$ subject-class summaries. For the spectral analysis, $\mu$- and $\beta$-band power are computed from the downsampled but otherwise unstandardized test trials using Welch power spectral density, averaged over all 22 channels within 8--13 Hz and 13--30 Hz, respectively.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.74\linewidth]{outputs/bspc_sessionwise/tau_dist_placeholder.pdf}
+  \caption{Trial-averaged $\tau$ distributions from the session-wise CfC-style evaluation.}
+  \label{fig:tau}
+\end{figure}
+
+Figure \ref{fig:tau} indicates broad overlap in the class-wise $\tau$ distributions, with feet and tongue showing only slightly larger medians than the hand conditions. The overall Friedman test on subject-class summaries is not significant ($p = 0.644$), and no paired contrast approaches a stable class split (all raw $p \ge 0.220$). The first link in the evidence chain therefore does not provide consistent support for class separation: the learned time scales do not separate classes reliably under the stricter session-wise protocol.
+
+The spectral associations follow the same pattern: $\tau$ does not correlate significantly with $\mu$-band power ($r = 0.078$, $p = 0.651$) or $\beta$-band power ($r = 0.228$, $p = 0.181$). Time-resolved $\tau$ trajectories peak in the early post-cue period and then remain largely overlapping across classes. A windowed summary shows mean subject-level peak times between 2.32 s and 3.04 s, while early-window means (2.0--2.5 s) cluster around 1.49 and decay only slightly thereafter. Supplementary locality controls do not overturn this conclusion: when the same trial-level $\tau$ is recomputed after retaining only motor-related channels (C3, C4, CP3, CP4), the Friedman test remains non-significant ($p = 0.896$). A windowed analysis over 2.0--2.5 s, 2.5--3.5 s, and 3.5--4.0 s yields a nominal global effect only in the earliest window ($p = 0.042$), but no paired contrast is significant there, and the effect disappears under motor-channel restriction ($p = 0.586$, $0.954$, and $0.615$ for early, mid, and late windows). The remaining links in the chain therefore do not provide consistent support either: $\tau$ is not supported by class-dependent spectral associations and does not form a stable temporal marker over time. The central implication is mechanistic rather than merely descriptive: temporal adaptivity does not constitute a reliable source of class-discriminative information in this setting.
+
+\subsection{Structured Perturbations}
+To move beyond iid Gaussian perturbations, we evaluate two structured distortions on the session-wise models: 8--30 Hz band-limited noise at 5 dB and random dropout of 30\% of channels. For band-limited noise, white noise is filtered to 8--30 Hz and scaled trial-wise on the pre-standardization band-passed test trials according to $\mathrm{noise\ power} = \mathrm{signal\ power}/10^{\mathrm{SNR}/10}$, after which the perturbed trials are standardized with the same training-only statistics as the clean condition. Both perturbations are repeated with five random seeds per subject and model.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \caption{Session-wise accuracy ($\%$) under structured perturbations.}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Model} & \textbf{Band-limited 5 dB} & \textbf{Channel Dropout 30\%} \\
+    \midrule
+    Shallow ConvNet & 45.7 $\pm$ 18.1 & 40.7 $\pm$ 10.0 \\
+    Riemann-TSLR & 26.3 $\pm$ 3.3 & 27.5 $\pm$ 2.2 \\
+    EEGNet & 32.4 $\pm$ 6.7 & 36.0 $\pm$ 8.7 \\
+    Tiny-Transformer & 36.2 $\pm$ 11.6 & 33.1 $\pm$ 5.4 \\
+    CfC-style & 38.6 $\pm$ 12.5 & 34.0 $\pm$ 7.2 \\
+    Hybrid-CfC-style & 33.5 $\pm$ 8.5 & 34.5 $\pm$ 8.5 \\
+    LSTM & 38.6 $\pm$ 10.2 & 31.1 $\pm$ 4.4 \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:noise}
+\end{table}
+
+The models exhibit distinct structured-perturbation profiles, but the differences are less decisive than in the clean-condition benchmark once Holm correction is applied. Shallow ConvNet remains the strongest neural model under both perturbations, while Riemann-TSLR degrades sharply under band-limited noise but remains compact under channel dropout. CfC-style, Tiny-Transformer, and LSTM stay competitive with EEGNet under band-limited noise, yet none of these pairwise differences remain significant after Holm correction. A supplementary sweep over SNR $\in \{20,10,5,0\}$ dB and dropout $\in \{10\%,30\%,50\%\}$ shows no single robustness winner: Shallow ConvNet remains strongest from clean through 10 dB and across all tested dropout levels, while the ranking compresses at 5 dB and sequence models cluster near or above other baselines at 0 dB. This is a controlled perturbation study rather than a realistic artifact simulation.
+
+\section{Conclusion}
+
+Our results suggest that temporal adaptivity alone is insufficient to determine the performance ceiling in MI-EEG decoding, with performance more strongly influenced by spatial, spectral, and geometric priors. Across pooled, grouped, and session-wise protocols, the top accuracy is consistently delivered by Shallow ConvNet and Riemann-TSLR, while CfC-style and Tiny-Transformer remain in a middle tier below those compact spatial or geometric baselines. Under the stricter session-wise protocol, $\tau$ behaves mainly as a qualitative temporal-scale indicator rather than a robust class biomarker. A supporting binary-MI check on BNCI2014-004 again leaves Shallow ConvNet strongest (80.1\%) and does not alter the main boundary claim.
+
+A practical efficiency snapshot sharpens this tradeoff. On an RTX 4060 laptop GPU with batch size 64 and 22$\times$500 inputs, representative forward times are 2.3 ms for EEGNet, 3.5 ms for Shallow ConvNet, 8.2 ms for LSTM, 19.8 ms for Tiny-Transformer, 28.8 ms for Hybrid-CfC-style, and 407.1 ms for pure CfC-style; at batch size 1 the approximate per-trial latencies are 0.67 ms, 0.27 ms, 3.14 ms, 1.09 ms, 11.0 ms, and 155.4 ms, while Riemann-TSLR requires 0.69 ms on CPU inference. These eager-mode FP32 measurements are implementation-specific snapshots, and the high CfC-style cost is dominated by the explicit per-time-step Python loop and repeated candidate/$\tau$ MLP evaluations. We did not benchmark vectorized scan, JIT, or \texttt{torch.compile} variants here, so the reported latency should be read as the cost of the present implementation rather than a lower bound for all CfC-style recurrences.
+
+Several limitations remain. Parameter efficiency is not matched across families, $\Delta t=1.0$ means $\tau$ should be interpreted as a relative rather than physiological timescale, and the baseline set does not yet include ODE/CDE models, selective SSMs such as Mamba or MI-Mamba, stronger CNN/transformer hybrids such as DBConformer, or graph/deeper geometry-aware models such as Graph-CSPNet and GAH-TNet \cite{gu2023mamba,gui2024eegmamba,guo2025mimamba,wang2025dbconformer,ingolfsson2020eegtcnet,elouahidi2024simpleconv,li2024ctnet,han2024eegcct,ju2022graphcspnet,han2025gahtnet}. The Hybrid-CfC-style frontend is deliberately minimal and diagnostic, so its weaker performance should not be interpreted as evidence against all spatial-continuous hybrids. We also omit cropped training, stronger shallow stems, and aggressive augmentation; these choices keep the comparison controlled, but they also mean recent within-subject reports using such enhancements can legitimately achieve higher absolute CNN accuracies than the compact reference baselines reported here \cite{ingolfsson2020eegtcnet,elouahidi2024simpleconv,li2024ctnet,han2024eegcct}. Although the grouped pooled control now covers all seven main models and preserves the same ordering, more comprehensive cross-subject generalization and richer $\tau$ analyses remain open problems. We do not claim that temporal modeling is universally unimportant across EEG, only that its role is secondary in this specific standard four-class MI setting. A plausible task-level reason is that MI-EEG discrimination is anchored more strongly in spatially localized sensorimotor patterns and band-limited ERD/ERS structure, while temporal dynamics act mainly as modulation rather than the primary discriminative substrate, consistent with MOABB-scale evidence that covariance-based priors remain unusually strong across EEG benchmarks \cite{agarwalla2024moabb}. Overall, within standard four-class MI-EEG settings, this task does not appear to be fundamentally bottlenecked by temporal-scale modeling, but more strongly by spatial and spectral structure.
+
+\section*{ACKNOWLEDGMENT}
+The author would like to acknowledge the providers of the BCI Competition IV-2a dataset and BNCI2014-004 dataset for making their data publicly available. The author also used ChatGPT (OpenAI) to assist in improving the clarity and language of this manuscript. The author takes full responsibility for the content of this paper.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+\end{document}

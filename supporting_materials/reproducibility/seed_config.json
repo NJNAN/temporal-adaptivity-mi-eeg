@@ -1,0 +1,30 @@
+{
+  "git_commit": "479f091329103e4ea4806c15bf561dcc51162998",
+  "pooled_cv_seed": 20260318,
+  "sessionwise_seed": 20260320,
+  "grouped_cv_seed": 20260321,
+  "downsample_factor": 2,
+  "val_fraction": 0.15,
+  "structured_repeats": 5,
+  "subjects": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "scripts": {
+    "pooled": "scripts/run_mi_experiments.py",
+    "sessionwise": "scripts/run_sessionwise_mi_comparison.py",
+    "grouped_cv": "scripts/run_grouped_pooled_control.py",
+    "perturbation_sweep": "scripts/run_structured_perturbation_sweep.py",
+    "temporal_shuffle": "scripts/run_temporal_shuffle_control.py",
+    "bnci_aux": "scripts/run_bnci2014_004_aux.py",
+    "efficiency": "scripts/benchmark_model_efficiency.py",
+    "export": "scripts/export_reproducibility_artifacts.py"
+  }
+}

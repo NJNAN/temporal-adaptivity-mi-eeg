@@ -1,0 +1,73 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Large public dataset caches
+# The BCI Competition / BNCI data are public and should be downloaded via MOABB,
+# not committed to GitHub.
+data/
+MNE-bnci-data/
+
+# Experiment outputs and model/data caches
+# Keep the curated small evidence package under supporting_materials/ instead.
+outputs/
+*.ckpt
+*.pt
+*.pth
+*.npz
+*.npy
+
+# Temporary working files
+tmp/
+temp/
+*.tmp
+tmp_pdf_extract.txt
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Local editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local archives and template bundles
+*.zip
+*.7z
+*.rar
+
+# Ad-hoc extracted text / rendered previews
+tmp_*.txt
+*_extract.txt
+*_page*.png

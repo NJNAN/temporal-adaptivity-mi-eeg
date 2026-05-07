@@ -1,0 +1,66 @@
+{
+  "num_seeds": 2,
+  "seeds": [
+    42,
+    43
+  ],
+  "models": [
+    "cfc",
+    "eegnet",
+    "lstm",
+    "riemann_tslr",
+    "shallow_convnet"
+  ],
+  "rankings": [
+    {
+      "seed": 42,
+      "ranking": "Riemann-TSLR > Shallow ConvNet > EEGNet > CfC-style > LSTM"
+    },
+    {
+      "seed": 43,
+      "ranking": "Riemann-TSLR > Shallow ConvNet > EEGNet > CfC-style > LSTM"
+    }
+  ],
+  "pairwise_relations": {
+    "cfc_gt_eegnet": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "cfc_gt_lstm": {
+      "count": 2,
+      "num_seeds": 2
+    },
+    "cfc_gt_riemann_tslr": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "cfc_gt_shallow_convnet": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "eegnet_gt_lstm": {
+      "count": 2,
+      "num_seeds": 2
+    },
+    "eegnet_gt_riemann_tslr": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "eegnet_gt_shallow_convnet": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "lstm_gt_riemann_tslr": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "lstm_gt_shallow_convnet": {
+      "count": 0,
+      "num_seeds": 2
+    },
+    "riemann_tslr_gt_shallow_convnet": {
+      "count": 2,
+      "num_seeds": 2
+    }
+  }
+}

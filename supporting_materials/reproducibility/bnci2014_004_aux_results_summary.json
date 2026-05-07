@@ -1,0 +1,143 @@
+{
+  "generated_at": "2026-03-22 12:18:41",
+  "dataset": "BNCI2014-004",
+  "protocol": "train sessions 0/1/2, test sessions 3/4",
+  "device": "cuda",
+  "label_order": [
+    "left_hand",
+    "right_hand"
+  ],
+  "config": {
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "models": [
+      "shallow_convnet",
+      "riemann_tslr",
+      "cfc",
+      "lstm"
+    ],
+    "epochs": 80,
+    "patience": 20,
+    "min_epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "val_fraction": 0.15,
+    "seed": 42,
+    "cfc_hidden_size": 128,
+    "lstm_hidden_size": 128,
+    "downsample_factor": 2,
+    "device": "cuda",
+    "data_dir": "data",
+    "output_dir": "outputs\\bnci2014_004_aux"
+  },
+  "parameter_counts": {
+    "shallow_convnet": 8362,
+    "riemann_tslr": 14,
+    "cfc": 83842,
+    "lstm": 200706
+  },
+  "summary": {
+    "cfc": {
+      "accuracy_mean": 72.57440476190476,
+      "accuracy_std": 15.152830720971522,
+      "f1_mean": 0.7116933226845147,
+      "f1_std": 0.16928041877923647
+    },
+    "lstm": {
+      "accuracy_mean": 72.91170634920634,
+      "accuracy_std": 14.352344922558025,
+      "f1_mean": 0.7125855527940799,
+      "f1_std": 0.16127859259728877
+    },
+    "riemann_tslr": {
+      "accuracy_mean": 73.2390873015873,
+      "accuracy_std": 14.421579631221594,
+      "f1_mean": 0.7216615442237362,
+      "f1_std": 0.15273003554680906
+    },
+    "shallow_convnet": {
+      "accuracy_mean": 80.0595238095238,
+      "accuracy_std": 14.643401557823697,
+      "f1_mean": 0.7985502721786472,
+      "f1_std": 0.14769861320198158
+    }
+  },
+  "stat_tests": {
+    "shallow_convnet_vs_riemann_tslr": {
+      "t_statistic": 3.637830294922286,
+      "p_value": 0.006609682712734142,
+      "cohen_d": 1.2126100961515207,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 6.820436507936508,
+      "n_subjects": 9,
+      "holm_p_value": 0.03304841356367071,
+      "wilcoxon_holm_p_value": 0.0234375
+    },
+    "shallow_convnet_vs_cfc": {
+      "t_statistic": 3.859167807426797,
+      "p_value": 0.004814591838125584,
+      "cohen_d": 1.2863892669314827,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 7.485119047619047,
+      "n_subjects": 9,
+      "holm_p_value": 0.028887551028753504,
+      "wilcoxon_holm_p_value": 0.0234375
+    },
+    "shallow_convnet_vs_lstm": {
+      "t_statistic": 3.4248323693734073,
+      "p_value": 0.009023366268657216,
+      "cohen_d": 1.1416107879678166,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 7.14781746031746,
+      "n_subjects": 9,
+      "holm_p_value": 0.036093465074628864,
+      "wilcoxon_holm_p_value": 0.0234375
+    },
+    "riemann_tslr_vs_cfc": {
+      "t_statistic": 1.0807505986589405,
+      "p_value": 0.3113084033274589,
+      "cohen_d": 0.36025019760046606,
+      "wilcoxon_statistic": 11.0,
+      "wilcoxon_p_value": 0.3671875,
+      "mean_diff": 0.6646825396825393,
+      "n_subjects": 9,
+      "holm_p_value": 0.9339252099823767,
+      "wilcoxon_holm_p_value": 1.0
+    },
+    "riemann_tslr_vs_lstm": {
+      "t_statistic": 0.2605649455114564,
+      "p_value": 0.8010095074897375,
+      "cohen_d": 0.08685498160672372,
+      "wilcoxon_statistic": 21.0,
+      "wilcoxon_p_value": 0.90625,
+      "mean_diff": 0.32738095238095294,
+      "n_subjects": 9,
+      "holm_p_value": 1.0,
+      "wilcoxon_holm_p_value": 1.0
+    },
+    "cfc_vs_lstm": {
+      "t_statistic": -0.22225130031765372,
+      "p_value": 0.8296871930463899,
+      "cohen_d": -0.07408376660983619,
+      "wilcoxon_statistic": 20.5,
+      "wilcoxon_p_value": 0.84765625,
+      "mean_diff": -0.3373015873015864,
+      "n_subjects": 9,
+      "holm_p_value": 1.0,
+      "wilcoxon_holm_p_value": 1.0
+    }
+  }
+}

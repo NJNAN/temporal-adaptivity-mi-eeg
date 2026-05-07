@@ -17,6 +17,7 @@ import json
 import math
 import os
 import random
+import shutil
 import time
 import warnings
 from dataclasses import asdict, dataclass
@@ -64,6 +65,9 @@ MODEL_DISPLAY_NAMES = {
     "eegnet": "EEGNet",
     "shallow_convnet": "Shallow ConvNet",
     "tiny_transformer": "Tiny-Transformer",
+    "mi_mamba": "MI-Mamba-style",
+    "ss_head": "SpatialSpectral-Head",
+    "ss_cfc": "SpatialSpectral-CfC",
     "hybrid_cfc": "Hybrid-CfC-style",
     "cfc": "CfC-style",
     "gru": "GRU",
@@ -74,6 +78,9 @@ MODEL_ORDER = [
     "Shallow ConvNet",
     "Riemann-TSLR",
     "EEGNet",
+    "MI-Mamba-style",
+    "SpatialSpectral-Head",
+    "SpatialSpectral-CfC",
     "Tiny-Transformer",
     "Hybrid-CfC-style",
     "CfC-style",
@@ -84,6 +91,9 @@ MODEL_PALETTE = {
     "Shallow ConvNet": "#6b5b95",
     "Riemann-TSLR": "#8c564b",
     "EEGNet": "#1f77b4",
+    "MI-Mamba-style": "#bcbd22",
+    "SpatialSpectral-Head": "#7f7f7f",
+    "SpatialSpectral-CfC": "#e377c2",
     "Tiny-Transformer": "#17becf",
     "Hybrid-CfC-style": "#ff7f0e",
     "CfC-style": "#2ca02c",
@@ -111,6 +121,8 @@ class ExperimentConfig:
     seed: int
     cfc_hidden_size: int
     lstm_hidden_size: int
+    cfc_dt: float
+    cfc_tau_init: float
     downsample_factor: int
     device: str
     data_dir: str
@@ -292,7 +304,7 @@ class AdaptiveCfCCell(nn.Module):
     对应论文方法里的 `CfC-style exponential-decay update`：
     使用 input-dependent、per-unit 的 tau 来实现离散采样下的指数混合。
     """
-    def __init__(self, input_size: int, hidden_size: int) -> None:
+    def __init__(self, input_size: int, hidden_size: int, tau_init: float = 1.0) -> None:
         super().__init__()
         self.norm = nn.LayerNorm(input_size + hidden_size)
         self.candidate = nn.Sequential(
@@ -305,7 +317,7 @@ class AdaptiveCfCCell(nn.Module):
             nn.Linear(hidden_size, hidden_size),
         )
         nn.init.zeros_(self.tau_mlp[-1].weight)
-        nn.init.constant_(self.tau_mlp[-1].bias, inverse_softplus(1.0))
+        nn.init.constant_(self.tau_mlp[-1].bias, inverse_softplus(tau_init))
 
     def forward(self, x_t: torch.Tensor, hidden: torch.Tensor, dt: float) -> Tuple[torch.Tensor, torch.Tensor]:
         """执行单时间步更新。
@@ -325,13 +337,21 @@ class CfCClassifier(nn.Module):
 
     对应论文中的核心连续时间模型，用来检验“temporal adaptivity 是否足以支撑判别”。
     """
-    def __init__(self, n_channels: int, hidden_size: int, n_classes: int) -> None:
+    def __init__(
+        self,
+        n_channels: int,
+        hidden_size: int,
+        n_classes: int,
+        dt: float = 1.0,
+        tau_init: float = 1.0,
+    ) -> None:
         super().__init__()
         self.input_proj = nn.Linear(n_channels, hidden_size)
-        self.cell = AdaptiveCfCCell(hidden_size, hidden_size)
+        self.cell = AdaptiveCfCCell(hidden_size, hidden_size, tau_init=tau_init)
         self.dropout = nn.Dropout(0.2)
         self.classifier = nn.Linear(hidden_size * 2, n_classes)
         self.hidden_size = hidden_size
+        self.dt = float(dt)
 
     def forward(self, x: torch.Tensor, return_aux: bool = False):
         x = x.transpose(1, 2)
@@ -341,7 +361,7 @@ class CfCClassifier(nn.Module):
         hidden_steps = []
         tau_steps = [] if return_aux else None
         for step in range(seq_len):
-            hidden, tau = self.cell(x[:, step, :], hidden, dt=1.0)
+            hidden, tau = self.cell(x[:, step, :], hidden, dt=self.dt)
             hidden_steps.append(hidden)
             if return_aux:
                 tau_steps.append(tau)
@@ -359,7 +379,14 @@ class HybridCfCClassifier(nn.Module):
     对应论文中用于隔离“轻量空间前端 + 连续时间单元”作用的 diagnostic design，
     不是为了追求最优 hybrid 性能。
     """
-    def __init__(self, n_channels: int, hidden_size: int, n_classes: int) -> None:
+    def __init__(
+        self,
+        n_channels: int,
+        hidden_size: int,
+        n_classes: int,
+        dt: float = 1.0,
+        tau_init: float = 1.0,
+    ) -> None:
         super().__init__()
         temporal_filters = 8
         spatial_filters = 16
@@ -392,10 +419,11 @@ class HybridCfCClassifier(nn.Module):
             nn.Dropout(0.25),
         )
         self.bridge = nn.Linear(spatial_filters, hidden_size)
-        self.cell = AdaptiveCfCCell(hidden_size, hidden_size)
+        self.cell = AdaptiveCfCCell(hidden_size, hidden_size, tau_init=tau_init)
         self.dropout = nn.Dropout(0.2)
         self.classifier = nn.Linear(hidden_size, n_classes)
         self.hidden_size = hidden_size
+        self.dt = float(dt)
 
     def forward(self, x: torch.Tensor, return_aux: bool = False):
         x = x.unsqueeze(1)
@@ -405,10 +433,179 @@ class HybridCfCClassifier(nn.Module):
         batch_size, seq_len, _ = x.shape
         hidden = x.new_zeros(batch_size, self.hidden_size)
         for step in range(seq_len):
-            hidden, _ = self.cell(x[:, step, :], hidden, dt=1.0)
+            hidden, _ = self.cell(x[:, step, :], hidden, dt=self.dt)
         logits = self.classifier(self.dropout(hidden))
         if return_aux:
             return logits, {}
+        return logits
+
+
+class SelectiveSSMBlock(nn.Module):
+    """轻量 selective-SSM block。
+
+    这是 MI-Mamba 的可复现实验替身：保留输入依赖门控、局部卷积和线性状态扫描，
+    但不依赖 Windows 上较难安装的 `mamba-ssm` CUDA 扩展。
+    """
+
+    def __init__(self, d_model: int, d_state: int = 16, dropout: float = 0.2) -> None:
+        super().__init__()
+        self.norm = nn.LayerNorm(d_model)
+        self.in_proj = nn.Linear(d_model, d_model * 2)
+        self.depthwise_conv = nn.Conv1d(
+            d_model,
+            d_model,
+            kernel_size=5,
+            padding=2,
+            groups=d_model,
+            bias=False,
+        )
+        self.a_log = nn.Parameter(torch.zeros(d_model, d_state))
+        self.b_proj = nn.Linear(d_model, d_model * d_state)
+        self.c_proj = nn.Linear(d_model, d_model * d_state)
+        self.out_proj = nn.Linear(d_model, d_model)
+        self.dropout = nn.Dropout(dropout)
+        self.d_model = d_model
+        self.d_state = d_state
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        residual = x
+        x = self.norm(x)
+        content, gate = self.in_proj(x).chunk(2, dim=-1)
+        content = self.depthwise_conv(content.transpose(1, 2)).transpose(1, 2)
+        content = F.silu(content)
+        gate = torch.sigmoid(gate)
+        a = -F.softplus(self.a_log)
+        b = self.b_proj(content).view(content.size(0), content.size(1), self.d_model, self.d_state)
+        c = self.c_proj(content).view(content.size(0), content.size(1), self.d_model, self.d_state)
+        state = content.new_zeros(content.size(0), self.d_model, self.d_state)
+        outputs = []
+        decay = torch.exp(a).unsqueeze(0)
+        for step in range(content.size(1)):
+            state = decay * state + b[:, step, :, :] * content[:, step, :].unsqueeze(-1)
+            y_t = (c[:, step, :, :] * state).sum(dim=-1)
+            outputs.append(y_t)
+        y = torch.stack(outputs, dim=1)
+        y = self.out_proj(y * gate)
+        return residual + self.dropout(y)
+
+
+class MIMambaStyleClassifier(nn.Module):
+    """MI-Mamba-style 对照。
+
+    采用 EEGNet-like 空间前端 + selective-SSM 扫描，用来回应审稿人关于
+    Mamba/MI-Mamba head-to-head 的要求。该实现是本仓库统一协议下的
+    surrogate baseline，不直接声称复现原论文全部工程细节。
+    """
+
+    def __init__(self, n_channels: int, n_samples: int, n_classes: int, d_model: int = 64) -> None:
+        super().__init__()
+        self.frontend = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=(1, 31), padding="same", bias=False),
+            nn.BatchNorm2d(16),
+            nn.Conv2d(16, 32, kernel_size=(n_channels, 1), groups=16, bias=False),
+            nn.BatchNorm2d(32),
+            nn.ELU(),
+            nn.AvgPool2d(kernel_size=(1, 4)),
+            nn.Dropout(0.25),
+            nn.Conv2d(32, 32, kernel_size=(1, 15), padding="same", groups=32, bias=False),
+            nn.Conv2d(32, d_model, kernel_size=(1, 1), bias=False),
+            nn.BatchNorm2d(d_model),
+            nn.ELU(),
+            nn.AvgPool2d(kernel_size=(1, 2)),
+            nn.Dropout(0.25),
+        )
+        self.ssm = nn.Sequential(
+            SelectiveSSMBlock(d_model=d_model, d_state=16, dropout=0.2),
+            SelectiveSSMBlock(d_model=d_model, d_state=16, dropout=0.2),
+        )
+        self.norm = nn.LayerNorm(d_model)
+        self.classifier = nn.Linear(d_model * 2, n_classes)
+
+    def forward(self, x: torch.Tensor, return_aux: bool = False):
+        x = self.frontend(x.unsqueeze(1)).squeeze(2).transpose(1, 2)
+        x = self.ssm(x)
+        x = self.norm(x)
+        pooled = torch.cat([x.mean(dim=1), x.amax(dim=1)], dim=1)
+        logits = self.classifier(pooled)
+        if return_aux:
+            return logits, {}
+        return logits
+
+
+class SpatialSpectralFrontend(nn.Module):
+    """Shallow-like 空间频谱前端，供 stronger hybrid ablation 复用。"""
+
+    def __init__(self, n_channels: int, out_channels: int = 40) -> None:
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(1, out_channels, kernel_size=(1, 25), bias=False),
+            nn.Conv2d(out_channels, out_channels, kernel_size=(n_channels, 1), bias=False),
+            nn.BatchNorm2d(out_channels),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.net(x.unsqueeze(1))
+        x = torch.square(x)
+        return torch.log(torch.clamp(x, min=1e-6)).squeeze(2).transpose(1, 2)
+
+
+class SpatialSpectralHeadClassifier(nn.Module):
+    """空间频谱前端 + 简单读出，用作 strong hybrid 的 frontend-only 对照。"""
+
+    def __init__(self, n_channels: int, n_classes: int, feature_channels: int = 40) -> None:
+        super().__init__()
+        self.frontend = SpatialSpectralFrontend(n_channels, out_channels=feature_channels)
+        self.dropout = nn.Dropout(0.5)
+        self.classifier = nn.Linear(feature_channels * 2, n_classes)
+
+    def forward(self, x: torch.Tensor, return_aux: bool = False):
+        features = self.frontend(x)
+        pooled = torch.cat([features.mean(dim=1), features.amax(dim=1)], dim=1)
+        logits = self.classifier(self.dropout(pooled))
+        if return_aux:
+            return logits, {}
+        return logits
+
+
+class SpatialSpectralCfCClassifier(nn.Module):
+    """更强的 spatial-spectral + CfC hybrid。
+
+    该模型用于检验“空间频谱前端已经解释了大部分收益，还是 CfC 后端能带来协同增益”。
+    """
+
+    def __init__(
+        self,
+        n_channels: int,
+        hidden_size: int,
+        n_classes: int,
+        dt: float = 1.0,
+        tau_init: float = 1.0,
+        feature_channels: int = 40,
+    ) -> None:
+        super().__init__()
+        self.frontend = SpatialSpectralFrontend(n_channels, out_channels=feature_channels)
+        self.bridge = nn.Linear(feature_channels, hidden_size)
+        self.cell = AdaptiveCfCCell(hidden_size, hidden_size, tau_init=tau_init)
+        self.dropout = nn.Dropout(0.3)
+        self.classifier = nn.Linear(hidden_size * 2, n_classes)
+        self.hidden_size = hidden_size
+        self.dt = float(dt)
+
+    def forward(self, x: torch.Tensor, return_aux: bool = False):
+        x = torch.tanh(self.bridge(self.frontend(x)))
+        hidden = x.new_zeros(x.size(0), self.hidden_size)
+        hidden_steps = []
+        tau_steps = [] if return_aux else None
+        for step in range(x.size(1)):
+            hidden, tau = self.cell(x[:, step, :], hidden, dt=self.dt)
+            hidden_steps.append(hidden)
+            if return_aux:
+                tau_steps.append(tau)
+        hidden_seq = torch.stack(hidden_steps, dim=1)
+        pooled = torch.cat([hidden_seq.mean(dim=1), hidden_seq.amax(dim=1)], dim=1)
+        logits = self.classifier(self.dropout(pooled))
+        if return_aux:
+            return logits, {"tau": torch.stack(tau_steps, dim=1)}
         return logits
 
 
@@ -508,6 +705,23 @@ def prepare_subject_cache(subjects: List[int], data_dir: Path, cache_dir: Path) 
         load_subject_data(subject, data_dir, cache_dir)
 
 
+def seed_subject_cache(repo_root: Path, target_cache: Path, fallback_name: str = "bspc_pooled") -> None:
+    """从已有 outputs 缓存复制 subject_*.npz，避免复现实验反复触发 MOABB 下载。"""
+    source_cache = repo_root / "outputs" / fallback_name / "cache"
+    if not source_cache.exists():
+        return
+    target_cache.mkdir(parents=True, exist_ok=True)
+    try:
+        if source_cache.resolve() == target_cache.resolve():
+            return
+    except FileNotFoundError:
+        return
+    for source_file in source_cache.glob("subject_*.npz"):
+        target_file = target_cache / source_file.name
+        if not target_file.exists():
+            shutil.copy2(source_file, target_file)
+
+
 def compute_standardizer(x_train: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """计算训练集 per-channel 标准化统计量。
 
@@ -566,6 +780,8 @@ def build_model(
     n_classes: int,
     cfc_hidden_size: int,
     lstm_hidden_size: int,
+    cfc_dt: float = 1.0,
+    cfc_tau_init: float = 1.0,
 ) -> nn.Module:
     """按论文模型名构建对应网络。"""
     if model_name == "eegnet":
@@ -574,14 +790,38 @@ def build_model(
         return ShallowConvNet(n_channels=n_channels, n_samples=n_samples, n_classes=n_classes)
     if model_name == "tiny_transformer":
         return TinyTransformerClassifier(n_channels=n_channels, n_samples=n_samples, n_classes=n_classes)
+    if model_name == "mi_mamba":
+        return MIMambaStyleClassifier(n_channels=n_channels, n_samples=n_samples, n_classes=n_classes)
+    if model_name == "ss_head":
+        return SpatialSpectralHeadClassifier(n_channels=n_channels, n_classes=n_classes)
+    if model_name == "ss_cfc":
+        return SpatialSpectralCfCClassifier(
+            n_channels=n_channels,
+            hidden_size=cfc_hidden_size,
+            n_classes=n_classes,
+            dt=cfc_dt,
+            tau_init=cfc_tau_init,
+        )
     if model_name == "lstm":
         return LSTMClassifier(n_channels=n_channels, hidden_size=lstm_hidden_size, n_classes=n_classes)
     if model_name == "gru":
         return GRUClassifier(n_channels=n_channels, hidden_size=lstm_hidden_size, n_classes=n_classes)
     if model_name == "cfc":
-        return CfCClassifier(n_channels=n_channels, hidden_size=cfc_hidden_size, n_classes=n_classes)
+        return CfCClassifier(
+            n_channels=n_channels,
+            hidden_size=cfc_hidden_size,
+            n_classes=n_classes,
+            dt=cfc_dt,
+            tau_init=cfc_tau_init,
+        )
     if model_name == "hybrid_cfc":
-        return HybridCfCClassifier(n_channels=n_channels, hidden_size=cfc_hidden_size, n_classes=n_classes)
+        return HybridCfCClassifier(
+            n_channels=n_channels,
+            hidden_size=cfc_hidden_size,
+            n_classes=n_classes,
+            dt=cfc_dt,
+            tau_init=cfc_tau_init,
+        )
     raise ValueError(f"Unsupported model: {model_name}")
 
 
@@ -613,6 +853,8 @@ def get_parameter_count(
     n_classes: int,
     cfc_hidden_size: int,
     lstm_hidden_size: int,
+    cfc_dt: float = 1.0,
+    cfc_tau_init: float = 1.0,
 ) -> int:
     """统一获取论文所有模型的参数量。"""
     if model_name == "riemann_tslr":
@@ -624,6 +866,8 @@ def get_parameter_count(
         n_classes=n_classes,
         cfc_hidden_size=cfc_hidden_size,
         lstm_hidden_size=lstm_hidden_size,
+        cfc_dt=cfc_dt,
+        cfc_tau_init=cfc_tau_init,
     )
     return count_parameters(probe_model)
 
@@ -1338,6 +1582,7 @@ def run_experiment(config: ExperimentConfig) -> Dict[str, object]:
     noise_metrics_path = output_dir / "noise_metrics.csv"
     tau_store_path = output_dir / "tau_samples.json"
 
+    seed_subject_cache(root_dir, cache_dir)
     prepare_subject_cache(config.subjects, data_dir, cache_dir)
 
     fold_rows = load_progress_csv(fold_metrics_path)
@@ -1369,6 +1614,8 @@ def run_experiment(config: ExperimentConfig) -> Dict[str, object]:
                     n_classes=len(LABEL_ORDER),
                     cfc_hidden_size=config.cfc_hidden_size,
                     lstm_hidden_size=config.lstm_hidden_size,
+                    cfc_dt=config.cfc_dt,
+                    cfc_tau_init=config.cfc_tau_init,
                 )
         # pooled 协议：先合并两次 session，再做被试内 stratified K-fold。
         splitter = StratifiedKFold(n_splits=config.num_folds, shuffle=True, random_state=config.seed + subject)
@@ -1436,6 +1683,8 @@ def run_experiment(config: ExperimentConfig) -> Dict[str, object]:
                         n_classes=len(LABEL_ORDER),
                         cfc_hidden_size=config.cfc_hidden_size,
                         lstm_hidden_size=config.lstm_hidden_size,
+                        cfc_dt=config.cfc_dt,
+                        cfc_tau_init=config.cfc_tau_init,
                     )
                     fit_info = train_one_model(
                         model=runtime_model,
@@ -1606,6 +1855,8 @@ def parse_args() -> ExperimentConfig:
     parser.add_argument("--seed", type=int, default=20260318)
     parser.add_argument("--cfc-hidden-size", type=int, default=128)
     parser.add_argument("--lstm-hidden-size", type=int, default=128)
+    parser.add_argument("--cfc-dt", type=float, default=1.0)
+    parser.add_argument("--cfc-tau-init", type=float, default=1.0)
     parser.add_argument("--downsample-factor", type=int, default=2)
     parser.add_argument("--data-dir", default="data")
     parser.add_argument("--output-dir", default="outputs/bspc_pooled")
@@ -1628,10 +1879,12 @@ def parse_args() -> ExperimentConfig:
             seed=args.seed,
             cfc_hidden_size=args.cfc_hidden_size,
             lstm_hidden_size=args.lstm_hidden_size,
+            cfc_dt=args.cfc_dt,
+            cfc_tau_init=args.cfc_tau_init,
             downsample_factor=args.downsample_factor,
             device=args.device,
             data_dir=args.data_dir,
-            output_dir="outputs/bspc_smoke",
+            output_dir=args.output_dir if args.output_dir != "outputs/bspc_pooled" else "outputs/bspc_smoke",
             smoke_test=True,
         )
 
@@ -1650,6 +1903,8 @@ def parse_args() -> ExperimentConfig:
         seed=args.seed,
         cfc_hidden_size=args.cfc_hidden_size,
         lstm_hidden_size=args.lstm_hidden_size,
+        cfc_dt=args.cfc_dt,
+        cfc_tau_init=args.cfc_tau_init,
         downsample_factor=args.downsample_factor,
         device=args.device,
         data_dir=args.data_dir,

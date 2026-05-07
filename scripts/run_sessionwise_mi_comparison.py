@@ -74,6 +74,8 @@ class SessionwiseConfig:
     seed: int
     cfc_hidden_size: int
     lstm_hidden_size: int
+    cfc_dt: float
+    cfc_tau_init: float
     downsample_factor: int
     structured_repeats: int
     device: str
@@ -673,6 +675,8 @@ def run_sessionwise(config: SessionwiseConfig) -> Dict[str, object]:
                     n_classes=len(module.LABEL_ORDER),
                     cfc_hidden_size=config.cfc_hidden_size,
                     lstm_hidden_size=config.lstm_hidden_size,
+                    cfc_dt=config.cfc_dt,
+                    cfc_tau_init=config.cfc_tau_init,
                 )
 
         train_loader = module.build_loader(X_train, y_train_full[train_idx], config.batch_size, True, device)
@@ -707,6 +711,8 @@ def run_sessionwise(config: SessionwiseConfig) -> Dict[str, object]:
                     n_classes=len(module.LABEL_ORDER),
                     cfc_hidden_size=config.cfc_hidden_size,
                     lstm_hidden_size=config.lstm_hidden_size,
+                    cfc_dt=config.cfc_dt,
+                    cfc_tau_init=config.cfc_tau_init,
                 )
                 fit_info = module.train_one_model(
                     model=runtime_model,
@@ -977,6 +983,8 @@ def parse_args() -> SessionwiseConfig:
     parser.add_argument("--seed", type=int, default=20260320)
     parser.add_argument("--cfc-hidden-size", type=int, default=128)
     parser.add_argument("--lstm-hidden-size", type=int, default=128)
+    parser.add_argument("--cfc-dt", type=float, default=1.0)
+    parser.add_argument("--cfc-tau-init", type=float, default=1.0)
     parser.add_argument("--downsample-factor", type=int, default=2)
     parser.add_argument("--structured-repeats", type=int, default=5)
     parser.add_argument("--device", default="cuda", choices=["cuda", "cpu"])
@@ -996,6 +1004,8 @@ def parse_args() -> SessionwiseConfig:
         seed=args.seed,
         cfc_hidden_size=args.cfc_hidden_size,
         lstm_hidden_size=args.lstm_hidden_size,
+        cfc_dt=args.cfc_dt,
+        cfc_tau_init=args.cfc_tau_init,
         downsample_factor=args.downsample_factor,
         structured_repeats=args.structured_repeats,
         device=args.device,

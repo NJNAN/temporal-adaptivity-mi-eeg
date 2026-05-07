@@ -29,6 +29,12 @@ This repository includes the scripts, seeds, and exported score tables used for 
   - Practical GPU throughput / memory snapshot plus approximate per-trial latency and CPU `Riemann-TSLR` latency
 - `scripts/export_reproducibility_artifacts.py`
   - Exports paper-ready tables, split assignments, and the supporting-materials package
+- `scripts/run_loso_cross_subject.py`
+  - Revision experiment for leave-one-subject-out cross-subject evaluation
+- `scripts/run_cfc_dt_tau_ablation.py`
+  - Revision wrapper for `Delta t` and `tau` initialization ablations
+- `scripts/run_tau_topography.py`
+  - Revision analysis for channel-wise sensitivity of hidden-state `tau`
 
 ## Seeds and split configuration
 
@@ -95,6 +101,10 @@ python scripts/summarize_seed_variability.py --run-dir outputs/seed_variability/
 python scripts/run_bnci2014_004_aux.py --models shallow_convnet riemann_tslr eegnet tiny_transformer cfc lstm --output-dir outputs/bnci2014_004_aux --seed 42
 python scripts/benchmark_model_efficiency.py
 python scripts/export_reproducibility_artifacts.py
+python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
+python scripts/run_loso_cross_subject.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_loso
+python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
+python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography
 ```
 
 ## Notes
@@ -104,6 +114,10 @@ python scripts/export_reproducibility_artifacts.py
 - The session-wise protocol trains on session 1, uses a validation split drawn from session 1 only, and tests on session 2.
 - The supplementary repeat-seed session-wise check uses the same outer protocol as the main session-wise benchmark, but reruns the clean evaluation with repeat seeds `42` and `43`; for a given subject and repeat seed, all models share the same split seed and training seed. This is intended as a limited repeatability sanity check, not a full multi-seed study.
 - The auxiliary BNCI2014-004 run is intentionally kept outside the main tables because it is a binary-MI sanity check with a different channel set and protocol scale; it is included only to test whether the main boundary claim qualitatively survives a second dataset. In that auxiliary run, Shallow ConvNet remains first, while CfC-style and LSTM become nearly tied.
+- The revision code now includes `MI-Mamba-style`, `SpatialSpectral-Head`, and `SpatialSpectral-CfC` baselines. `MI-Mamba-style` is a shared-protocol selective-SSM surrogate implemented in PyTorch for this repository; it should not be described as a byte-for-byte reproduction of the original MI-Mamba implementation.
+- The LOSO script holds out one subject for testing and uses a different training subject for validation, so no held-out-subject trials are used for normalization, validation, or early stopping.
+- The `tau` topography script reports channel-wise sensitivity of hidden-state time constants by occluding standardized input channels. These values are not electrode-specific learned `tau` parameters.
+- The `--cfc-dt` and `--cfc-tau-init` options are available in the pooled and session-wise runners and are swept by `run_cfc_dt_tau_ablation.py`.
 - The supplementary `GRU` control uses the same hidden size, recurrent depth, dropout, and mean-max pooling readout as the LSTM baseline.
 - `outputs/paper_ready/sessionwise_stats.csv` and `outputs/paper_ready/pooled_stats.csv` apply Holm correction within the full benchmark comparison family for that protocol.
 - `outputs/paper_ready/recurrent_control_stats.json` applies Holm correction only within the recurrent-only control family `{cfc_vs_gru, gru_vs_lstm, cfc_vs_lstm}`, so shared comparisons such as `cfc_vs_lstm` can differ from the full-benchmark CSVs.

@@ -49,7 +49,7 @@ Recommended setup:
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install numpy pandas scipy scikit-learn matplotlib seaborn torch moabb pyriemann reportlab
+python -m pip install -r requirements.txt
 ```
 
 CUDA is optional but strongly recommended for the neural-model experiments. The scripts accept `--device cpu`, but full runs will be slow on CPU.
@@ -104,6 +104,32 @@ BNCI2014-004 auxiliary experiment:
 
 ```powershell
 python scripts/run_bnci2014_004_aux.py --models shallow_convnet riemann_tslr eegnet tiny_transformer cfc lstm --output-dir outputs/bnci2014_004_aux --seed 42
+```
+
+## Reviewer-Requested Revision Experiments
+
+MI-Mamba-style head-to-head under the shared pooled protocol:
+
+```powershell
+python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
+```
+
+Leave-one-subject-out cross-subject benchmark:
+
+```powershell
+python scripts/run_loso_cross_subject.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_loso
+```
+
+CfC `Delta t` and `tau` initialization ablation:
+
+```powershell
+python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
+```
+
+Channel-wise `tau` sensitivity / topography:
+
+```powershell
+python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography
 ```
 
 Export paper-ready tables and supporting artifacts:

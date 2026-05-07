@@ -23,6 +23,9 @@ ENV/
 # not committed to GitHub.
 data/
 MNE-bnci-data/
+# MOABB/MNE can occasionally materialize this Windows path fragment when a
+# drive-letter data path is passed through POSIX-style internals.
+D-/
 
 # Experiment outputs and model/data caches
 # Keep the curated small evidence package under supporting_materials/ instead.

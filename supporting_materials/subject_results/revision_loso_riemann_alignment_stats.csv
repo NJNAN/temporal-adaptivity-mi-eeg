@@ -1,0 +1,2 @@
+comparison,t_statistic,p_value,cohen_d,wilcoxon_statistic,wilcoxon_p_value,mean_diff,n_subjects
+standard_vs_euclidean_alignment,-4.943252638694144,0.0011304301586026006,-1.64775087758789,0.0,0.00390625,-13.734567901234568,9

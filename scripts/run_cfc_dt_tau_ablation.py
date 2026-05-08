@@ -56,11 +56,21 @@ def run_ablation(config: AblationConfig):
     sessionwise = load_sessionwise(repo_root)
     output_dir = repo_root / config.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
-    rows = []
+    summary_path = output_dir / "ablation_summary.csv"
+    rows = pd.read_csv(summary_path).to_dict(orient="records") if summary_path.exists() else []
+    completed = {
+        (float(row["dt"]), float(row["tau_init"]), str(row["model"]))
+        for row in rows
+        if {"dt", "tau_init", "model"}.issubset(row)
+    }
     for dt_value in config.dt_values:
         for tau_init in config.tau_init_values:
+            combo_done = all((float(dt_value), float(tau_init), model_name) in completed for model_name in config.models)
             combo_name = f"dt_{dt_value:g}_tau_{tau_init:g}".replace(".", "p")
             combo_dir = output_dir / combo_name
+            if combo_done:
+                print(f"skipping completed ablation combo {combo_name}", flush=True)
+                continue
             seed_cache(repo_root, combo_dir / "cache")
             print(f"running ablation combo {combo_name}", flush=True)
             session_config = sessionwise.SessionwiseConfig(

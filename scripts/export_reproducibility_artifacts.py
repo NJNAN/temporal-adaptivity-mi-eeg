@@ -175,6 +175,7 @@ def main() -> None:
     tau_control_dir = repo_root / "outputs" / "bspc_tau_controls"
     revision_mamba_dir = repo_root / "outputs" / "revision_mamba_pooled"
     revision_loso_dir = repo_root / "outputs" / "revision_loso"
+    revision_loso_alignment_dir = repo_root / "outputs" / "revision_loso_riemann_alignment"
     revision_tau_topography_dir = repo_root / "outputs" / "revision_tau_topography"
     revision_ablation_dir = repo_root / "outputs" / "revision_cfc_dt_tau_ablation"
     paper_dir = repo_root / "outputs" / "paper_ready"
@@ -496,6 +497,23 @@ def main() -> None:
         copy_if_exists(revision_loso_dir / "loso_assignments.csv", paper_dir / "revision_loso_assignments.csv")
         copy_if_exists(revision_loso_dir / "loso_stats.csv", paper_dir / "revision_loso_stats.csv")
 
+    if (revision_loso_alignment_dir / "riemann_alignment_loso_results_summary.json").exists():
+        key_stats["revision_loso_riemann_alignment"] = json.loads(
+            (revision_loso_alignment_dir / "riemann_alignment_loso_results_summary.json").read_text(encoding="utf-8")
+        )
+        copy_if_exists(
+            revision_loso_alignment_dir / "riemann_alignment_loso_summary.csv",
+            paper_dir / "revision_loso_riemann_alignment_summary.csv",
+        )
+        copy_if_exists(
+            revision_loso_alignment_dir / "riemann_alignment_loso_metrics.csv",
+            paper_dir / "revision_loso_riemann_alignment_metrics.csv",
+        )
+        copy_if_exists(
+            revision_loso_alignment_dir / "riemann_alignment_loso_stats.csv",
+            paper_dir / "revision_loso_riemann_alignment_stats.csv",
+        )
+
     if (revision_ablation_dir / "ablation_summary.csv").exists():
         copy_if_exists(revision_ablation_dir / "ablation_summary.csv", paper_dir / "revision_cfc_dt_tau_ablation_summary.csv")
         key_stats["revision_cfc_dt_tau_ablation"] = {
@@ -619,6 +637,8 @@ def main() -> None:
             "temporal_shuffle": "scripts/run_temporal_shuffle_control.py",
             "bnci_aux": "scripts/run_bnci2014_004_aux.py",
             "loso_revision": "scripts/run_loso_cross_subject.py",
+            "loso_riemann_alignment": "scripts/run_loso_riemann_alignment_check.py",
+            "repair_mamba_pooled": "scripts/repair_mamba_pooled_summary.py",
             "cfc_dt_tau_ablation": "scripts/run_cfc_dt_tau_ablation.py",
             "tau_topography": "scripts/run_tau_topography.py",
             "environment_check": "scripts/check_environment.py",
@@ -639,6 +659,7 @@ def main() -> None:
             (paper_dir / "temporal_shuffle_summary.csv", "temporal_shuffle_summary.csv"),
             (paper_dir / "revision_mamba_pooled_table.csv", "revision_mamba_pooled_table.csv"),
             (paper_dir / "revision_loso_table.csv", "revision_loso_table.csv"),
+            (paper_dir / "revision_loso_riemann_alignment_summary.csv", "revision_loso_riemann_alignment_summary.csv"),
             (paper_dir / "revision_cfc_dt_tau_ablation_summary.csv", "revision_cfc_dt_tau_ablation_summary.csv"),
             (paper_dir / "revision_tau_occlusion_channel_summary.csv", "revision_tau_occlusion_channel_summary.csv"),
             (paper_dir / "bnci2014_004_aux_summary.csv", "bnci2014_004_aux_summary.csv"),
@@ -661,6 +682,8 @@ def main() -> None:
             (paper_dir / "revision_mamba_pooled_subject_scores.csv", "revision_mamba_pooled_subject_scores.csv"),
             (paper_dir / "revision_loso_metrics.csv", "revision_loso_metrics.csv"),
             (paper_dir / "revision_loso_assignments.csv", "revision_loso_assignments.csv"),
+            (paper_dir / "revision_loso_riemann_alignment_metrics.csv", "revision_loso_riemann_alignment_metrics.csv"),
+            (paper_dir / "revision_loso_riemann_alignment_stats.csv", "revision_loso_riemann_alignment_stats.csv"),
             (gru_pooled_dir / "subject_summary.csv", "gru_pooled_subject_scores.csv"),
             (gru_session_dir / "sessionwise_metrics.csv", "gru_sessionwise_subject_scores.csv"),
             (paper_dir / "pooled_fold_assignments.csv", "pooled_fold_assignments.csv"),
@@ -749,6 +772,8 @@ def main() -> None:
             (repo_root / "scripts" / "run_bnci2014_004_aux.py", "run_bnci2014_004_aux.py"),
             (repo_root / "scripts" / "run_temporal_shuffle_control.py", "run_temporal_shuffle_control.py"),
             (repo_root / "scripts" / "run_loso_cross_subject.py", "run_loso_cross_subject.py"),
+            (repo_root / "scripts" / "run_loso_riemann_alignment_check.py", "run_loso_riemann_alignment_check.py"),
+            (repo_root / "scripts" / "repair_mamba_pooled_summary.py", "repair_mamba_pooled_summary.py"),
             (repo_root / "scripts" / "run_cfc_dt_tau_ablation.py", "run_cfc_dt_tau_ablation.py"),
             (repo_root / "scripts" / "run_tau_topography.py", "run_tau_topography.py"),
             (repo_root / "scripts" / "check_environment.py", "check_environment.py"),

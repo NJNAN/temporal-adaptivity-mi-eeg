@@ -33,6 +33,7 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `paper_tables/temporal_shuffle_summary.csv`
 - `paper_tables/revision_mamba_pooled_table.csv`
 - `paper_tables/revision_loso_table.csv`
+- `paper_tables/revision_loso_riemann_alignment_summary.csv`
 - `paper_tables/revision_cfc_dt_tau_ablation_summary.csv`
 - `paper_tables/revision_tau_occlusion_channel_summary.csv`
 - `paper_tables/tau_local_window_stats.json`
@@ -55,6 +56,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `subject_results/revision_mamba_pooled_subject_scores.csv`
 - `subject_results/revision_loso_metrics.csv`
 - `subject_results/revision_loso_assignments.csv`
+- `subject_results/revision_loso_riemann_alignment_metrics.csv`
+- `subject_results/revision_loso_riemann_alignment_stats.csv`
 - `subject_results/pooled_per_class_f1_summary.csv`
 - `subject_results/sessionwise_per_class_f1_summary.csv`
 - `subject_results/grouped_per_class_f1_summary.csv`
@@ -95,4 +98,5 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - The perturbation sweep evaluates `SNR = 20, 10, 5, 0 dB` and channel-dropout fractions `0.1, 0.3, 0.5` with five random seeds per subject-model condition.
 - The temporal-shuffle control keeps training fixed and randomizes within-trial time order only at test time, using one permutation per trial shared across all channels. It is included as a supplementary diagnostic to test whether preserving temporal order creates any distinct CfC-style advantage.
 - The reviewer-revision exports include a PyTorch `MI-Mamba-style` surrogate under the shared protocol, a leave-one-subject-out cross-subject benchmark, a `Delta t` / `tau` initialization ablation snapshot, and a channel-wise `tau` sensitivity topography.
+- The LOSO Riemann alignment diagnostic is reported separately from the main raw LOSO protocol because Euclidean Alignment uses each subject's unlabeled trials for test-time unsupervised alignment.
 - `CfC-style` denotes the implemented exponential-decay variant studied in this repository; it is intentionally distinguished from every canonical smoothed-gate CfC instantiation.

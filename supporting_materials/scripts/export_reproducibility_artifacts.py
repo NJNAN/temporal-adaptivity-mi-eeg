@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
 import shutil
 import subprocess
@@ -38,7 +39,7 @@ def build_summary_table(summary: dict, parameter_counts: dict, display_name_fn, 
             {
                 "model": model_name,
                 "model_display": display_name_fn(model_name),
-                "params": int(parameter_counts[model_name]),
+                "params": "" if parameter_counts.get(model_name) is None else int(parameter_counts[model_name]),
                 "accuracy_mean": metrics["accuracy_mean"],
                 "accuracy_std": metrics["accuracy_std"],
                 "f1_mean": metrics["f1_mean"],
@@ -84,6 +85,67 @@ def build_tau_window_summary(path: Path) -> dict:
     return summary
 
 
+def sha256_file(path: Path) -> str:
+    """Compute a content hash for small curated artifacts."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def build_artifact_manifest(roots: list[tuple[str, Path]], output_path: Path) -> None:
+    """Write a file manifest for the exported paper-ready/supporting package."""
+    rows = []
+    for root_name, root in roots:
+        if not root.exists():
+            continue
+        for path in sorted(item for item in root.rglob("*") if item.is_file()):
+            if path.resolve() == output_path.resolve():
+                continue
+            rows.append(
+                {
+                    "package_root": root_name,
+                    "relative_path": path.relative_to(root).as_posix(),
+                    "size_bytes": path.stat().st_size,
+                    "sha256": sha256_file(path),
+                }
+            )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows).to_csv(output_path, index=False)
+
+
+def export_revision_summary_table(
+    summary_path: Path,
+    output_path: Path,
+    display_name_fn,
+    model_order: list[str],
+) -> dict | None:
+    if not summary_path.exists():
+        return None
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    build_summary_table(
+        summary["summary"],
+        summary["parameter_counts"],
+        display_name_fn,
+        model_order,
+    ).to_csv(output_path, index=False)
+    return summary
+
+
+def merged_lookup(primary: dict, fallback: dict, key: str):
+    value = primary.get(key)
+    if value is None:
+        value = fallback.get(key)
+    if value is None:
+        raise KeyError(key)
+    return value
+
+
+def has_merged(primary: dict, fallback: dict, key: str) -> bool:
+    return primary.get(key) is not None or fallback.get(key) is not None
+
+
 def git_commit(repo_root: Path) -> str:
     """记录当前代码版本，对应论文复现说明中的 commit hash。"""
     result = subprocess.run(
@@ -111,6 +173,10 @@ def main() -> None:
     efficiency_dir = repo_root / "outputs" / "bspc_efficiency"
     bnci_aux_dir = repo_root / "outputs" / "bnci2014_004_aux"
     tau_control_dir = repo_root / "outputs" / "bspc_tau_controls"
+    revision_mamba_dir = repo_root / "outputs" / "revision_mamba_pooled"
+    revision_loso_dir = repo_root / "outputs" / "revision_loso"
+    revision_tau_topography_dir = repo_root / "outputs" / "revision_tau_topography"
+    revision_ablation_dir = repo_root / "outputs" / "revision_cfc_dt_tau_ablation"
     paper_dir = repo_root / "outputs" / "paper_ready"
     support_dir = repo_root / "supporting_materials"
     paper_dir.mkdir(parents=True, exist_ok=True)
@@ -177,38 +243,30 @@ def main() -> None:
                 "protocol": "pooled",
                 "model": model_name,
                 "model_display": core.get_model_display_name(model_name),
-                "params": int(
-                    pooled_summary["parameter_counts"].get(model_name, gru_pooled_summary["parameter_counts"].get(model_name))
-                ),
-                "accuracy_mean": (
-                    pooled_summary["summary"].get(model_name, gru_pooled_summary["summary"].get(model_name))["accuracy_mean"]
-                ),
-                "accuracy_std": (
-                    pooled_summary["summary"].get(model_name, gru_pooled_summary["summary"].get(model_name))["accuracy_std"]
-                ),
-                "f1_mean": pooled_summary["summary"].get(model_name, gru_pooled_summary["summary"].get(model_name))["f1_mean"],
-                "f1_std": pooled_summary["summary"].get(model_name, gru_pooled_summary["summary"].get(model_name))["f1_std"],
+                "params": int(merged_lookup(pooled_summary["parameter_counts"], gru_pooled_summary["parameter_counts"], model_name)),
+                "accuracy_mean": merged_lookup(pooled_summary["summary"], gru_pooled_summary["summary"], model_name)["accuracy_mean"],
+                "accuracy_std": merged_lookup(pooled_summary["summary"], gru_pooled_summary["summary"], model_name)["accuracy_std"],
+                "f1_mean": merged_lookup(pooled_summary["summary"], gru_pooled_summary["summary"], model_name)["f1_mean"],
+                "f1_std": merged_lookup(pooled_summary["summary"], gru_pooled_summary["summary"], model_name)["f1_std"],
             }
             for model_name in ["cfc", "gru", "lstm"]
+            if has_merged(pooled_summary["parameter_counts"], gru_pooled_summary["parameter_counts"], model_name)
+            and has_merged(pooled_summary["summary"], gru_pooled_summary["summary"], model_name)
         ]
         + [
             {
                 "protocol": "sessionwise",
                 "model": model_name,
                 "model_display": core.get_model_display_name(model_name),
-                "params": int(
-                    session_summary["parameter_counts"].get(model_name, gru_session_summary["parameter_counts"].get(model_name))
-                ),
-                "accuracy_mean": (
-                    session_summary["summary"].get(model_name, gru_session_summary["summary"].get(model_name))["accuracy_mean"]
-                ),
-                "accuracy_std": (
-                    session_summary["summary"].get(model_name, gru_session_summary["summary"].get(model_name))["accuracy_std"]
-                ),
-                "f1_mean": session_summary["summary"].get(model_name, gru_session_summary["summary"].get(model_name))["f1_mean"],
-                "f1_std": session_summary["summary"].get(model_name, gru_session_summary["summary"].get(model_name))["f1_std"],
+                "params": int(merged_lookup(session_summary["parameter_counts"], gru_session_summary["parameter_counts"], model_name)),
+                "accuracy_mean": merged_lookup(session_summary["summary"], gru_session_summary["summary"], model_name)["accuracy_mean"],
+                "accuracy_std": merged_lookup(session_summary["summary"], gru_session_summary["summary"], model_name)["accuracy_std"],
+                "f1_mean": merged_lookup(session_summary["summary"], gru_session_summary["summary"], model_name)["f1_mean"],
+                "f1_std": merged_lookup(session_summary["summary"], gru_session_summary["summary"], model_name)["f1_std"],
             }
             for model_name in ["cfc", "gru", "lstm"]
+            if has_merged(session_summary["parameter_counts"], gru_session_summary["parameter_counts"], model_name)
+            and has_merged(session_summary["summary"], gru_session_summary["summary"], model_name)
         ]
     )
     recurrent_control_table.to_csv(paper_dir / "recurrent_control_table.csv", index=False)
@@ -280,18 +338,24 @@ def main() -> None:
         ],
         ignore_index=True,
     )
-    recurrent_control_stats = {
-        "pooled": {
-            "cfc_vs_gru": core.paired_test(pooled_recurrent_df[["subject", "model", "accuracy"]], "cfc", "gru"),
-            "gru_vs_lstm": core.paired_test(pooled_recurrent_df[["subject", "model", "accuracy"]], "gru", "lstm"),
-            "cfc_vs_lstm": core.paired_test(pooled_recurrent_df[["subject", "model", "accuracy"]], "cfc", "lstm"),
-        },
-        "sessionwise": {
-            "cfc_vs_gru": core.paired_test(session_recurrent_df[["subject", "model", "accuracy"]], "cfc", "gru"),
-            "gru_vs_lstm": core.paired_test(session_recurrent_df[["subject", "model", "accuracy"]], "gru", "lstm"),
-            "cfc_vs_lstm": core.paired_test(session_recurrent_df[["subject", "model", "accuracy"]], "cfc", "lstm"),
-        },
-    }
+    recurrent_control_stats = {"pooled": {}, "sessionwise": {}}
+    for name, model_a, model_b in [
+        ("cfc_vs_gru", "cfc", "gru"),
+        ("gru_vs_lstm", "gru", "lstm"),
+        ("cfc_vs_lstm", "cfc", "lstm"),
+    ]:
+        if {model_a, model_b}.issubset(set(pooled_recurrent_df["model"])):
+            recurrent_control_stats["pooled"][name] = core.paired_test(
+                pooled_recurrent_df[["subject", "model", "accuracy"]],
+                model_a,
+                model_b,
+            )
+        if {model_a, model_b}.issubset(set(session_recurrent_df["model"])):
+            recurrent_control_stats["sessionwise"][name] = core.paired_test(
+                session_recurrent_df[["subject", "model", "accuracy"]],
+                model_a,
+                model_b,
+            )
     for test_family in recurrent_control_stats.values():
         core.apply_holm_correction(test_family, p_value_key="p_value", output_key="holm_p_value")
         core.apply_holm_correction(test_family, p_value_key="wilcoxon_p_value", output_key="wilcoxon_holm_p_value")
@@ -382,6 +446,79 @@ def main() -> None:
             "stat_tests": bnci_aux_results["stat_tests"],
             "protocol": bnci_aux_results["protocol"],
         }
+
+    revision_mamba_results = export_revision_summary_table(
+        revision_mamba_dir / "results_summary.json",
+        paper_dir / "revision_mamba_pooled_table.csv",
+        core.get_model_display_name,
+        [
+            "Shallow ConvNet",
+            "Riemann-TSLR",
+            "MI-Mamba-style",
+            "EEGNet",
+            "Hybrid-CfC-style",
+            "Tiny-Transformer",
+            "CfC-style",
+            "LSTM",
+        ],
+    )
+    if revision_mamba_results is not None:
+        key_stats["revision_mamba_pooled"] = {
+            "summary": revision_mamba_results["summary"],
+            "stat_tests": revision_mamba_results.get("stat_tests", {}),
+            "note": "Shared-protocol PyTorch MI-Mamba-style surrogate; not a byte-for-byte reproduction.",
+        }
+        copy_if_exists(revision_mamba_dir / "subject_summary.csv", paper_dir / "revision_mamba_pooled_subject_scores.csv")
+        copy_if_exists(revision_mamba_dir / "confusion_matrices.csv", paper_dir / "revision_mamba_pooled_confusion_matrices.csv")
+        copy_if_exists(revision_mamba_dir / "confusion_matrices.pdf", paper_dir / "revision_mamba_pooled_confusion_matrices.pdf")
+
+    revision_loso_results = export_revision_summary_table(
+        revision_loso_dir / "loso_results_summary.json",
+        paper_dir / "revision_loso_table.csv",
+        core.get_model_display_name,
+        [
+            "EEGNet",
+            "Shallow ConvNet",
+            "CfC-style",
+            "LSTM",
+            "MI-Mamba-style",
+            "Tiny-Transformer",
+            "Riemann-TSLR",
+        ],
+    )
+    if revision_loso_results is not None:
+        key_stats["revision_loso"] = {
+            "summary": revision_loso_results["summary"],
+            "stat_tests": revision_loso_results.get("stat_tests", {}),
+            "protocol": "leave-one-subject-out cross-subject",
+        }
+        copy_if_exists(revision_loso_dir / "loso_metrics.csv", paper_dir / "revision_loso_metrics.csv")
+        copy_if_exists(revision_loso_dir / "loso_assignments.csv", paper_dir / "revision_loso_assignments.csv")
+        copy_if_exists(revision_loso_dir / "loso_stats.csv", paper_dir / "revision_loso_stats.csv")
+
+    if (revision_ablation_dir / "ablation_summary.csv").exists():
+        copy_if_exists(revision_ablation_dir / "ablation_summary.csv", paper_dir / "revision_cfc_dt_tau_ablation_summary.csv")
+        key_stats["revision_cfc_dt_tau_ablation"] = {
+            "summary_csv": "revision_cfc_dt_tau_ablation_summary.csv",
+            "note": "This table reflects the completed rows present when export_reproducibility_artifacts.py was run.",
+        }
+
+    if (revision_tau_topography_dir / "tau_topography_stats.json").exists():
+        key_stats["revision_tau_topography"] = json.loads(
+            (revision_tau_topography_dir / "tau_topography_stats.json").read_text(encoding="utf-8")
+        )
+        copy_if_exists(
+            revision_tau_topography_dir / "tau_occlusion_channel_summary.csv",
+            paper_dir / "revision_tau_occlusion_channel_summary.csv",
+        )
+        copy_if_exists(
+            revision_tau_topography_dir / "tau_occlusion_channel_subject.csv",
+            paper_dir / "revision_tau_occlusion_channel_subject.csv",
+        )
+        copy_if_exists(
+            revision_tau_topography_dir / "tau_occlusion_topomap_global.pdf",
+            paper_dir / "revision_tau_occlusion_topomap_global.pdf",
+        )
     (paper_dir / "key_stats.json").write_text(json.dumps(key_stats, indent=2), encoding="utf-8")
 
     data_dir = repo_root / "data"
@@ -481,6 +618,10 @@ def main() -> None:
             "perturbation_sweep": "scripts/run_structured_perturbation_sweep.py",
             "temporal_shuffle": "scripts/run_temporal_shuffle_control.py",
             "bnci_aux": "scripts/run_bnci2014_004_aux.py",
+            "loso_revision": "scripts/run_loso_cross_subject.py",
+            "cfc_dt_tau_ablation": "scripts/run_cfc_dt_tau_ablation.py",
+            "tau_topography": "scripts/run_tau_topography.py",
+            "environment_check": "scripts/check_environment.py",
             "efficiency": "scripts/benchmark_model_efficiency.py",
             "export": "scripts/export_reproducibility_artifacts.py",
         },
@@ -496,6 +637,10 @@ def main() -> None:
             (paper_dir / "recurrent_control_table.csv", "recurrent_control_table.csv"),
             (paper_dir / "perturbation_sweep_summary.csv", "perturbation_sweep_summary.csv"),
             (paper_dir / "temporal_shuffle_summary.csv", "temporal_shuffle_summary.csv"),
+            (paper_dir / "revision_mamba_pooled_table.csv", "revision_mamba_pooled_table.csv"),
+            (paper_dir / "revision_loso_table.csv", "revision_loso_table.csv"),
+            (paper_dir / "revision_cfc_dt_tau_ablation_summary.csv", "revision_cfc_dt_tau_ablation_summary.csv"),
+            (paper_dir / "revision_tau_occlusion_channel_summary.csv", "revision_tau_occlusion_channel_summary.csv"),
             (paper_dir / "bnci2014_004_aux_summary.csv", "bnci2014_004_aux_summary.csv"),
             (paper_dir / "bnci2014_004_aux_stats.csv", "bnci2014_004_aux_stats.csv"),
             (paper_dir / "structured_perturbation_table.csv", "structured_perturbation_table.csv"),
@@ -513,6 +658,9 @@ def main() -> None:
             (paper_dir / "pooled_subject_scores.csv", "pooled_subject_scores.csv"),
             (paper_dir / "sessionwise_subject_scores.csv", "sessionwise_subject_scores.csv"),
             (paper_dir / "grouped_subject_scores.csv", "grouped_subject_scores.csv"),
+            (paper_dir / "revision_mamba_pooled_subject_scores.csv", "revision_mamba_pooled_subject_scores.csv"),
+            (paper_dir / "revision_loso_metrics.csv", "revision_loso_metrics.csv"),
+            (paper_dir / "revision_loso_assignments.csv", "revision_loso_assignments.csv"),
             (gru_pooled_dir / "subject_summary.csv", "gru_pooled_subject_scores.csv"),
             (gru_session_dir / "sessionwise_metrics.csv", "gru_sessionwise_subject_scores.csv"),
             (paper_dir / "pooled_fold_assignments.csv", "pooled_fold_assignments.csv"),
@@ -528,6 +676,8 @@ def main() -> None:
             (pooled_dir / "per_class_f1_summary.csv", "pooled_per_class_f1_summary.csv"),
             (paper_dir / "bnci2014_004_aux_metrics.csv", "bnci2014_004_aux_metrics.csv"),
             (paper_dir / "temporal_shuffle_subject_summary.csv", "temporal_shuffle_subject_summary.csv"),
+            (paper_dir / "revision_mamba_pooled_confusion_matrices.csv", "revision_mamba_pooled_confusion_matrices.csv"),
+            (paper_dir / "revision_mamba_pooled_confusion_matrices.pdf", "revision_mamba_pooled_confusion_matrices.pdf"),
             (pooled_dir / "confusion_matrices.csv", "pooled_confusion_matrices.csv"),
             (pooled_dir / "confusion_matrices.pdf", "pooled_confusion_matrices.pdf"),
             (session_dir / "per_class_f1_subject.csv", "sessionwise_per_class_f1_subject.csv"),
@@ -561,6 +711,9 @@ def main() -> None:
             ),
             (tau_control_dir / "global_tau_window_distributions.pdf", "global_tau_window_distributions.pdf"),
             (tau_control_dir / "motor_tau_window_distributions.pdf", "motor_tau_window_distributions.pdf"),
+            (paper_dir / "revision_tau_occlusion_channel_summary.csv", "revision_tau_occlusion_channel_summary.csv"),
+            (paper_dir / "revision_tau_occlusion_channel_subject.csv", "revision_tau_occlusion_channel_subject.csv"),
+            (paper_dir / "revision_tau_occlusion_topomap_global.pdf", "revision_tau_occlusion_topomap_global.pdf"),
         ],
         "robustness": [
             (session_dir / "structured_perturbation_metrics.csv", "structured_perturbation_metrics.csv"),
@@ -584,6 +737,7 @@ def main() -> None:
         ],
         "reproducibility": [
             (paper_dir / "seed_config.json", "seed_config.json"),
+            (paper_dir / "environment_check.json", "environment_check.json"),
             (paper_dir / "bnci2014_004_results_summary.json", "bnci2014_004_results_summary.json"),
             (repo_root / "REPRODUCIBILITY.md", "REPRODUCIBILITY.md"),
         ],
@@ -594,6 +748,10 @@ def main() -> None:
             (repo_root / "scripts" / "run_structured_perturbation_sweep.py", "run_structured_perturbation_sweep.py"),
             (repo_root / "scripts" / "run_bnci2014_004_aux.py", "run_bnci2014_004_aux.py"),
             (repo_root / "scripts" / "run_temporal_shuffle_control.py", "run_temporal_shuffle_control.py"),
+            (repo_root / "scripts" / "run_loso_cross_subject.py", "run_loso_cross_subject.py"),
+            (repo_root / "scripts" / "run_cfc_dt_tau_ablation.py", "run_cfc_dt_tau_ablation.py"),
+            (repo_root / "scripts" / "run_tau_topography.py", "run_tau_topography.py"),
+            (repo_root / "scripts" / "check_environment.py", "check_environment.py"),
             (repo_root / "scripts" / "benchmark_model_efficiency.py", "benchmark_model_efficiency.py"),
             (repo_root / "scripts" / "export_reproducibility_artifacts.py", "export_reproducibility_artifacts.py"),
         ],
@@ -609,6 +767,17 @@ def main() -> None:
         for source, target_name in files:
             if source.exists():
                 copy_if_exists(source, target_dir / target_name)
+
+    build_artifact_manifest(
+        [("outputs/paper_ready", paper_dir), ("supporting_materials", support_dir)],
+        paper_dir / "artifact_manifest.csv",
+    )
+    copy_if_exists(paper_dir / "artifact_manifest.csv", support_dir / "reproducibility" / "artifact_manifest.csv")
+    build_artifact_manifest(
+        [("outputs/paper_ready", paper_dir), ("supporting_materials", support_dir)],
+        paper_dir / "artifact_manifest.csv",
+    )
+    copy_if_exists(paper_dir / "artifact_manifest.csv", support_dir / "reproducibility" / "artifact_manifest.csv")
 
     print(paper_dir)
     print(support_dir)

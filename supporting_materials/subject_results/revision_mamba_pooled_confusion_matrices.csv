@@ -1,0 +1,129 @@
+model,model_display,true_label,pred_label,count,row_normalized
+shallow_convnet,Shallow ConvNet,left_hand,left_hand,897,0.6921296296296297
+shallow_convnet,Shallow ConvNet,left_hand,right_hand,217,0.16743827160493827
+shallow_convnet,Shallow ConvNet,left_hand,feet,90,0.06944444444444445
+shallow_convnet,Shallow ConvNet,left_hand,tongue,92,0.07098765432098765
+shallow_convnet,Shallow ConvNet,right_hand,left_hand,193,0.14891975308641975
+shallow_convnet,Shallow ConvNet,right_hand,right_hand,907,0.6998456790123457
+shallow_convnet,Shallow ConvNet,right_hand,feet,91,0.07021604938271606
+shallow_convnet,Shallow ConvNet,right_hand,tongue,105,0.08101851851851852
+shallow_convnet,Shallow ConvNet,feet,left_hand,103,0.07947530864197531
+shallow_convnet,Shallow ConvNet,feet,right_hand,133,0.10262345679012345
+shallow_convnet,Shallow ConvNet,feet,feet,848,0.654320987654321
+shallow_convnet,Shallow ConvNet,feet,tongue,212,0.16358024691358025
+shallow_convnet,Shallow ConvNet,tongue,left_hand,79,0.06095679012345679
+shallow_convnet,Shallow ConvNet,tongue,right_hand,117,0.09027777777777778
+shallow_convnet,Shallow ConvNet,tongue,feet,188,0.14506172839506173
+shallow_convnet,Shallow ConvNet,tongue,tongue,912,0.7037037037037037
+riemann_tslr,Riemann-TSLR,left_hand,left_hand,866,0.6682098765432098
+riemann_tslr,Riemann-TSLR,left_hand,right_hand,212,0.16358024691358025
+riemann_tslr,Riemann-TSLR,left_hand,feet,117,0.09027777777777778
+riemann_tslr,Riemann-TSLR,left_hand,tongue,101,0.0779320987654321
+riemann_tslr,Riemann-TSLR,right_hand,left_hand,216,0.16666666666666666
+riemann_tslr,Riemann-TSLR,right_hand,right_hand,867,0.6689814814814815
+riemann_tslr,Riemann-TSLR,right_hand,feet,105,0.08101851851851852
+riemann_tslr,Riemann-TSLR,right_hand,tongue,108,0.08333333333333333
+riemann_tslr,Riemann-TSLR,feet,left_hand,110,0.08487654320987655
+riemann_tslr,Riemann-TSLR,feet,right_hand,115,0.08873456790123457
+riemann_tslr,Riemann-TSLR,feet,feet,884,0.6820987654320988
+riemann_tslr,Riemann-TSLR,feet,tongue,187,0.14429012345679013
+riemann_tslr,Riemann-TSLR,tongue,left_hand,89,0.06867283950617284
+riemann_tslr,Riemann-TSLR,tongue,right_hand,113,0.08719135802469136
+riemann_tslr,Riemann-TSLR,tongue,feet,172,0.13271604938271606
+riemann_tslr,Riemann-TSLR,tongue,tongue,922,0.7114197530864198
+eegnet,EEGNet,left_hand,left_hand,847,0.6535493827160493
+eegnet,EEGNet,left_hand,right_hand,203,0.1566358024691358
+eegnet,EEGNet,left_hand,feet,113,0.08719135802469136
+eegnet,EEGNet,left_hand,tongue,133,0.10262345679012345
+eegnet,EEGNet,right_hand,left_hand,325,0.2507716049382716
+eegnet,EEGNet,right_hand,right_hand,692,0.5339506172839507
+eegnet,EEGNet,right_hand,feet,140,0.10802469135802469
+eegnet,EEGNet,right_hand,tongue,139,0.10725308641975309
+eegnet,EEGNet,feet,left_hand,273,0.21064814814814814
+eegnet,EEGNet,feet,right_hand,158,0.12191358024691358
+eegnet,EEGNet,feet,feet,552,0.42592592592592593
+eegnet,EEGNet,feet,tongue,313,0.24151234567901234
+eegnet,EEGNet,tongue,left_hand,171,0.13194444444444445
+eegnet,EEGNet,tongue,right_hand,114,0.08796296296296297
+eegnet,EEGNet,tongue,feet,208,0.16049382716049382
+eegnet,EEGNet,tongue,tongue,803,0.6195987654320988
+mi_mamba,MI-Mamba-style,left_hand,left_hand,812,0.6265432098765432
+mi_mamba,MI-Mamba-style,left_hand,right_hand,239,0.18441358024691357
+mi_mamba,MI-Mamba-style,left_hand,feet,90,0.06944444444444445
+mi_mamba,MI-Mamba-style,left_hand,tongue,155,0.11959876543209877
+mi_mamba,MI-Mamba-style,right_hand,left_hand,262,0.2021604938271605
+mi_mamba,MI-Mamba-style,right_hand,right_hand,795,0.6134259259259259
+mi_mamba,MI-Mamba-style,right_hand,feet,93,0.07175925925925926
+mi_mamba,MI-Mamba-style,right_hand,tongue,146,0.11265432098765432
+mi_mamba,MI-Mamba-style,feet,left_hand,205,0.15817901234567902
+mi_mamba,MI-Mamba-style,feet,right_hand,166,0.12808641975308643
+mi_mamba,MI-Mamba-style,feet,feet,642,0.49537037037037035
+mi_mamba,MI-Mamba-style,feet,tongue,283,0.2183641975308642
+mi_mamba,MI-Mamba-style,tongue,left_hand,171,0.13194444444444445
+mi_mamba,MI-Mamba-style,tongue,right_hand,130,0.10030864197530864
+mi_mamba,MI-Mamba-style,tongue,feet,183,0.1412037037037037
+mi_mamba,MI-Mamba-style,tongue,tongue,812,0.6265432098765432
+tiny_transformer,Tiny-Transformer,left_hand,left_hand,698,0.5385802469135802
+tiny_transformer,Tiny-Transformer,left_hand,right_hand,197,0.15200617283950618
+tiny_transformer,Tiny-Transformer,left_hand,feet,234,0.18055555555555555
+tiny_transformer,Tiny-Transformer,left_hand,tongue,167,0.12885802469135801
+tiny_transformer,Tiny-Transformer,right_hand,left_hand,277,0.21373456790123457
+tiny_transformer,Tiny-Transformer,right_hand,right_hand,614,0.4737654320987654
+tiny_transformer,Tiny-Transformer,right_hand,feet,220,0.1697530864197531
+tiny_transformer,Tiny-Transformer,right_hand,tongue,185,0.1427469135802469
+tiny_transformer,Tiny-Transformer,feet,left_hand,171,0.13194444444444445
+tiny_transformer,Tiny-Transformer,feet,right_hand,172,0.13271604938271606
+tiny_transformer,Tiny-Transformer,feet,feet,660,0.5092592592592593
+tiny_transformer,Tiny-Transformer,feet,tongue,293,0.22608024691358025
+tiny_transformer,Tiny-Transformer,tongue,left_hand,121,0.0933641975308642
+tiny_transformer,Tiny-Transformer,tongue,right_hand,137,0.10570987654320987
+tiny_transformer,Tiny-Transformer,tongue,feet,320,0.24691358024691357
+tiny_transformer,Tiny-Transformer,tongue,tongue,718,0.5540123456790124
+cfc,CfC-style,left_hand,left_hand,698,0.5385802469135802
+cfc,CfC-style,left_hand,right_hand,226,0.1743827160493827
+cfc,CfC-style,left_hand,feet,233,0.17978395061728394
+cfc,CfC-style,left_hand,tongue,139,0.10725308641975309
+cfc,CfC-style,right_hand,left_hand,279,0.2152777777777778
+cfc,CfC-style,right_hand,right_hand,596,0.45987654320987653
+cfc,CfC-style,right_hand,feet,257,0.19830246913580246
+cfc,CfC-style,right_hand,tongue,164,0.12654320987654322
+cfc,CfC-style,feet,left_hand,197,0.15200617283950618
+cfc,CfC-style,feet,right_hand,195,0.15046296296296297
+cfc,CfC-style,feet,feet,582,0.44907407407407407
+cfc,CfC-style,feet,tongue,322,0.24845679012345678
+cfc,CfC-style,tongue,left_hand,145,0.11188271604938271
+cfc,CfC-style,tongue,right_hand,131,0.10108024691358025
+cfc,CfC-style,tongue,feet,335,0.25848765432098764
+cfc,CfC-style,tongue,tongue,685,0.5285493827160493
+lstm,LSTM,left_hand,left_hand,641,0.49459876543209874
+lstm,LSTM,left_hand,right_hand,244,0.1882716049382716
+lstm,LSTM,left_hand,feet,194,0.14969135802469136
+lstm,LSTM,left_hand,tongue,217,0.16743827160493827
+lstm,LSTM,right_hand,left_hand,350,0.2700617283950617
+lstm,LSTM,right_hand,right_hand,474,0.36574074074074076
+lstm,LSTM,right_hand,feet,206,0.15895061728395063
+lstm,LSTM,right_hand,tongue,266,0.2052469135802469
+lstm,LSTM,feet,left_hand,289,0.22299382716049382
+lstm,LSTM,feet,right_hand,192,0.14814814814814814
+lstm,LSTM,feet,feet,383,0.29552469135802467
+lstm,LSTM,feet,tongue,432,0.3333333333333333
+lstm,LSTM,tongue,left_hand,146,0.11265432098765432
+lstm,LSTM,tongue,right_hand,134,0.10339506172839506
+lstm,LSTM,tongue,feet,316,0.24382716049382716
+lstm,LSTM,tongue,tongue,700,0.5401234567901234
+hybrid_cfc,Hybrid-CfC-style,left_hand,left_hand,734,0.566358024691358
+hybrid_cfc,Hybrid-CfC-style,left_hand,right_hand,278,0.21450617283950618
+hybrid_cfc,Hybrid-CfC-style,left_hand,feet,170,0.13117283950617284
+hybrid_cfc,Hybrid-CfC-style,left_hand,tongue,114,0.08796296296296297
+hybrid_cfc,Hybrid-CfC-style,right_hand,left_hand,288,0.2222222222222222
+hybrid_cfc,Hybrid-CfC-style,right_hand,right_hand,707,0.5455246913580247
+hybrid_cfc,Hybrid-CfC-style,right_hand,feet,169,0.13040123456790123
+hybrid_cfc,Hybrid-CfC-style,right_hand,tongue,132,0.10185185185185185
+hybrid_cfc,Hybrid-CfC-style,feet,left_hand,212,0.16358024691358025
+hybrid_cfc,Hybrid-CfC-style,feet,right_hand,204,0.1574074074074074
+hybrid_cfc,Hybrid-CfC-style,feet,feet,629,0.4853395061728395
+hybrid_cfc,Hybrid-CfC-style,feet,tongue,251,0.19367283950617284
+hybrid_cfc,Hybrid-CfC-style,tongue,left_hand,133,0.10262345679012345
+hybrid_cfc,Hybrid-CfC-style,tongue,right_hand,177,0.13657407407407407
+hybrid_cfc,Hybrid-CfC-style,tongue,feet,312,0.24074074074074073
+hybrid_cfc,Hybrid-CfC-style,tongue,tongue,674,0.5200617283950617

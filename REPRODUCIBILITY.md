@@ -29,6 +29,8 @@ This repository includes the scripts, seeds, and exported score tables used for 
   - Practical GPU throughput / memory snapshot plus approximate per-trial latency and CPU `Riemann-TSLR` latency
 - `scripts/export_reproducibility_artifacts.py`
   - Exports paper-ready tables, split assignments, and the supporting-materials package
+- `scripts/check_environment.py`
+  - Records Python, package, PyTorch/CUDA, GPU, Git commit, and expected-output availability for a reproducibility sanity check
 - `scripts/run_loso_cross_subject.py`
   - Revision experiment for leave-one-subject-out cross-subject evaluation
 - `scripts/run_cfc_dt_tau_ablation.py`
@@ -83,7 +85,34 @@ Full exported configuration is in:
 - `outputs/paper_ready/sessionwise_stats.csv`
 - `outputs/paper_ready/grouped_cv_stats.csv`
 - `outputs/paper_ready/structured_perturbation_stats.csv`
+- `outputs/paper_ready/revision_mamba_pooled_table.csv`
+- `outputs/paper_ready/revision_mamba_pooled_subject_scores.csv`
+- `outputs/paper_ready/revision_loso_table.csv`
+- `outputs/paper_ready/revision_loso_metrics.csv`
+- `outputs/paper_ready/revision_loso_assignments.csv`
+- `outputs/paper_ready/revision_cfc_dt_tau_ablation_summary.csv`
+- `outputs/paper_ready/revision_tau_occlusion_channel_summary.csv`
+- `outputs/paper_ready/revision_tau_occlusion_channel_subject.csv`
+- `outputs/paper_ready/revision_tau_occlusion_topomap_global.pdf`
 - `outputs/paper_ready/key_stats.json`
+- `outputs/paper_ready/environment_check.json`
+- `outputs/paper_ready/artifact_manifest.csv`
+
+The same curated revision artifacts are copied into `supporting_materials/` by:
+
+```powershell
+python scripts/export_reproducibility_artifacts.py
+```
+
+Key submission-facing copies are:
+
+- `supporting_materials/paper_tables/revision_mamba_pooled_table.csv`
+- `supporting_materials/paper_tables/revision_loso_table.csv`
+- `supporting_materials/paper_tables/revision_cfc_dt_tau_ablation_summary.csv`
+- `supporting_materials/paper_tables/revision_tau_occlusion_channel_summary.csv`
+- `supporting_materials/subject_results/revision_loso_metrics.csv`
+- `supporting_materials/tau_analysis/revision_tau_occlusion_topomap_global.pdf`
+- `supporting_materials/reproducibility/artifact_manifest.csv`
 
 ## Representative commands
 
@@ -101,11 +130,25 @@ python scripts/summarize_seed_variability.py --run-dir outputs/seed_variability/
 python scripts/run_bnci2014_004_aux.py --models shallow_convnet riemann_tslr eegnet tiny_transformer cfc lstm --output-dir outputs/bnci2014_004_aux --seed 42
 python scripts/benchmark_model_efficiency.py
 python scripts/export_reproducibility_artifacts.py
+python scripts/check_environment.py --output outputs/paper_ready/environment_check.json
 python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
 python scripts/run_loso_cross_subject.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_loso
 python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
 python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography
 ```
+
+## Local CUDA environment used for the revision run
+
+The current Windows workstation run used:
+
+```powershell
+cd "D:\作业\lnn论文1"
+$env:PYTHONNOUSERSITE = "1"
+$py = "D:\conda\envs\lnn-mi-eeg\python.exe"
+& $py scripts/check_environment.py --output outputs/paper_ready/environment_check.json
+```
+
+The environment was verified with PyTorch `2.11.0+cu128` and an NVIDIA GeForce RTX 4060 Laptop GPU. `PYTHONNOUSERSITE=1` is recommended on this machine to prevent user-site packages from shadowing the conda environment.
 
 ## Notes
 

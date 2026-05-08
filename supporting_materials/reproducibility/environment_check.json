@@ -1,0 +1,47 @@
+{
+  "python": {
+    "executable": "D:\\conda\\envs\\lnn-mi-eeg\\python.exe",
+    "version": "3.11.15 | packaged by Anaconda, Inc. | (main, Mar 11 2026, 17:12:15) [MSC v.1942 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.26200-SP0"
+  },
+  "git_commit": "2c7ba6763d9eacecc0732215417ae3371d34a1f4",
+  "packages": {
+    "numpy": "2.4.4",
+    "pandas": "3.0.2",
+    "scipy": "1.17.1",
+    "scikit-learn": "1.8.0",
+    "torch": "2.11.0+cu128",
+    "mne": "1.12.1",
+    "moabb": "1.5.0",
+    "pyriemann": "0.11",
+    "matplotlib": "3.10.9",
+    "seaborn": "0.13.2"
+  },
+  "torch": {
+    "installed": true,
+    "version": "2.11.0+cu128",
+    "cuda_compiled": "12.8",
+    "cuda_available": true,
+    "device_count": 1,
+    "cudnn_version": 91900,
+    "devices": [
+      {
+        "index": 0,
+        "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+        "total_memory_mib": 8187,
+        "capability": "8.9"
+      }
+    ]
+  },
+  "paths": {
+    "outputs/bspc_pooled": true,
+    "outputs/bspc_sessionwise": true,
+    "outputs/bspc_grouped_cv": true,
+    "outputs/revision_mamba_pooled": true,
+    "outputs/revision_loso": true,
+    "outputs/revision_tau_topography": true,
+    "outputs/revision_cfc_dt_tau_ablation": true,
+    "outputs/paper_ready": true,
+    "supporting_materials": true
+  }
+}

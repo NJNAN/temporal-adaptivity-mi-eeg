@@ -54,6 +54,17 @@ python -m pip install -r requirements.txt
 
 CUDA is optional but strongly recommended for the neural-model experiments. The scripts accept `--device cpu`, but full runs will be slow on CPU.
 
+Current local CUDA conda environment used for the revision experiments on this Windows machine:
+
+```powershell
+cd "D:\作业\lnn论文1"
+$env:PYTHONNOUSERSITE = "1"
+$py = "D:\conda\envs\lnn-mi-eeg\python.exe"
+& $py scripts/check_environment.py --output outputs/paper_ready/environment_check.json
+```
+
+That environment was verified with PyTorch `2.11.0+cu128` and an NVIDIA GeForce RTX 4060 Laptop GPU. Keeping `PYTHONNOUSERSITE=1` avoids accidental package mixing with the user-site Python installation.
+
 ## Quick Smoke Test
 
 Run a short single-subject validation pass:
@@ -137,6 +148,8 @@ Export paper-ready tables and supporting artifacts:
 ```powershell
 python scripts/export_reproducibility_artifacts.py
 ```
+
+The export step copies the curated revision results from `outputs/revision_*` into `outputs/paper_ready/` and `supporting_materials/`, including `revision_mamba_pooled_table.csv`, `revision_loso_table.csv`, `revision_cfc_dt_tau_ablation_summary.csv`, `revision_tau_occlusion_channel_summary.csv`, and `revision_tau_occlusion_topomap_global.pdf`. It also writes `outputs/paper_ready/artifact_manifest.csv` and `supporting_materials/reproducibility/artifact_manifest.csv`.
 
 More detail is available in `REPRODUCIBILITY.md`.
 

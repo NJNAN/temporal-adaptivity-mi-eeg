@@ -198,24 +198,24 @@ outputs/revision_cfc_dt_tau_ablation/
 
 当前状态：
 
-- 后台进程仍在运行。
-- 已完成组合：`dt=0.5, tau_init=0.5`。
-- 当前正在跑：`dt=0.5, tau_init=1.0`。
-- 当前日志到：`[13/27] subject=5 model=cfc device=cuda`。
+- 已完成全部 27 行。
+- 覆盖 `dt = 0.5, 1.0, 2.0`、`tau_init = 0.5, 1.0, 2.0`、`model = cfc, hybrid_cfc, ss_cfc`。
+- 已同步到 `outputs/paper_ready/revision_cfc_dt_tau_ablation_summary.csv` 和 `supporting_materials/paper_tables/revision_cfc_dt_tau_ablation_summary.csv`。
 
-已完成组合结果：
+最佳结果：
 
 | dt | tau_init | Model | Accuracy mean | Accuracy std | Macro-F1 mean | Macro-F1 std |
 |---:|---:|---|---:|---:|---:|---:|
-| 0.5 | 0.5 | Hybrid-CfC-style | 47.53 | 15.34 | 0.458 | 0.158 |
-| 0.5 | 0.5 | CfC-style | 44.68 | 12.31 | 0.418 | 0.129 |
-| 0.5 | 0.5 | SpatialSpectral-CfC | 37.81 | 11.33 | 0.328 | 0.140 |
+| 0.5 | 2.0 | Hybrid-CfC-style | 52.24 | 15.93 | 0.510 | 0.162 |
+| 2.0 | 0.5 | CfC-style | 45.60 | 13.11 | 0.419 | 0.156 |
+| 1.0 | 1.0 | SpatialSpectral-CfC | 39.12 | 12.54 | 0.360 | 0.142 |
 
 当前解读：
 
-- 仅从第一组看，较小 `dt/tau_init` 没有让 CfC 系列显著跃升。
-- 仍需等待完整 9 组组合结束后才能正式写结论。
-- 若后续组合均无明显提升，可用于回应：CfC 表现受限不是单纯因为 `Delta t=1.0` 或 `tau_init=1.0` 调参不当。
+- CfC-style 没有被 `dt/tau_init` 调参救回；最佳 45.60% 仍低于 spatial/geometric baselines。
+- Hybrid-CfC-style 在较大 `tau_init` 下有一定提升，说明 memory scale tuning 会影响 hybrid 表现。
+- SpatialSpectral-CfC 当前实现没有稳定协同收益。
+- 可用于回应：`Delta t=1.0` 或 `tau_init=1.0` 不是 CfC-style 性能受限的唯一解释，调参会改变数值但不改变主要排序。
 
 利好程度：目前中等偏利好，最终结论待完整 sweep。
 
@@ -253,8 +253,8 @@ In standard cue-locked four-class MI decoding, temporal adaptivity alone does no
    - 图注必须说明是 channel-wise sensitivity
 
 4. Delta t / tau initialization ablation
-   - 等完整 sweep 完成后加入 heatmap 或小表
-   - 当前仅第一组结果不能正式写最终结论
+   - 已完成 27 行 sweep
+   - 论文中可写成：memory-scale tuning modulates performance but does not overturn the main ranking
 
 ### 4.3 Methods 需要补充的模型说明
 
@@ -285,7 +285,7 @@ The minimal Hybrid-CfC diagnostic improves over pure CfC but remains below the s
 | 3. Cross-subject / LOSO | 已完成 | 中高利好 |
 | 4. Tau topography | 已完成 | 高利好，但需谨慎解释 |
 | 5. Hybrid-CfC 太弱 | Hybrid-CfC pooled 已补，SS-CfC 消融进行中 | 中等利好 |
-| 6. Delta t / tau init 任意 | 进行中 | 待完整 sweep |
+| 6. Delta t / tau init 任意 | 已完成 27 行 sweep | 中高利好 |
 | 7. Reproducibility | README/requirements 已有，仍需 environment check 和 manifest | 需继续补 |
 | 8. arXiv 状态 | Mamba 已初步更新，仍需最终核查 | 需继续补 |
 
@@ -308,7 +308,7 @@ Temporal adaptivity is useful but not sufficient. In standard cue-locked four-cl
 
 ## 7. 下一步任务
 
-1. 等 `dt/tau` 消融完整跑完。
+1. 重跑完整 full session-wise 主实验，修复被 smoke test 覆盖的 `outputs/bspc_sessionwise` 证据链。
 2. 修 `run_loso_cross_subject.py`：
    - 增加 `heldout_subject` 别名列。
    - 增加真正的断点续跑读取逻辑。

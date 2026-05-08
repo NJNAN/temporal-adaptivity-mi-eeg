@@ -202,33 +202,44 @@ Copy-Item supporting_materials supporting_materials_backup_before_export -Recurs
 - `parameter_counts` 覆盖所有模型。
 - table 中 params 不为空。
 
-### 2.5 `Delta t / tau_init` ablation 未完成
+### 2.5 `Delta t / tau_init` ablation 已完成
 
 **发现**
 
-当前 `outputs/revision_cfc_dt_tau_ablation/ablation_summary.csv` 只包含：
+`outputs/revision_cfc_dt_tau_ablation/ablation_summary.csv` 已补齐 27 行，覆盖：
 
-- `dt=0.5, tau_init=0.5`
-- `dt=0.5, tau_init=1.0`
-
-后台任务仍在继续运行。
+- `dt = 0.5, 1.0, 2.0`
+- `tau_init = 0.5, 1.0, 2.0`
+- `model = cfc, hybrid_cfc, ss_cfc`
 
 **影响**
 
-当前不能用该表回应审稿人关于 `Delta t=1.0` 任意性的质疑。
+现在可以用该表回应审稿人关于 `Delta t=1.0` 任意性的质疑。
 
 **严重程度**
 
-二级严重。不是结果损坏，而是未完成。
+已解除。该项从“未完成风险”变成“补充实验可用”。
 
-**补救方案**
+**结果摘要**
 
-让后台 sweep 跑完。完成后应有：
+最佳设置：
 
-- 3 个 dt：0.5, 1.0, 2.0
-- 3 个 tau_init：0.5, 1.0, 2.0
-- 3 个模型：cfc, hybrid_cfc, ss_cfc
-- 汇总表共 27 行
+- `cfc`: `dt=2.0, tau_init=0.5`, accuracy `45.60%`
+- `hybrid_cfc`: `dt=0.5, tau_init=2.0`, accuracy `52.24%`
+- `ss_cfc`: `dt=1.0, tau_init=1.0`, accuracy `39.12%`
+
+解释：
+
+- CfC 没有被 `dt/tau_init` 调参救回；最好结果仍低于 spatial/geometric baselines。
+- Hybrid-CfC 对较大的 `tau_init` 有一定收益，说明 temporal scale tuning 会影响 hybrid 表现。
+- SS-CfC 当前实现没有表现出稳定协同收益。
+
+**已同步文件**
+
+- `outputs/paper_ready/revision_cfc_dt_tau_ablation_summary.csv`
+- `outputs/paper_ready/revision_cfc_dt_tau_ablation_stats.json`
+- `supporting_materials/paper_tables/revision_cfc_dt_tau_ablation_summary.csv`
+- `supporting_materials/paper_tables/revision_cfc_dt_tau_ablation_stats.json`
 
 检查命令：
 
@@ -239,7 +250,7 @@ Import-Csv outputs/revision_cfc_dt_tau_ablation/ablation_summary.csv | Format-Ta
 
 **验收标准**
 
-`ablation_summary.csv` 为 27 行，并覆盖所有 dt/tau_init 组合。
+已满足：`ablation_summary.csv` 为 27 行，并覆盖所有 dt/tau_init 组合。
 
 ### 2.6 LOSO 中 Riemann-TSLR 排名异常
 

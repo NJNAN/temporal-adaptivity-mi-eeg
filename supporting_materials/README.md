@@ -35,6 +35,7 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `paper_tables/revision_loso_table.csv`
 - `paper_tables/revision_loso_riemann_alignment_summary.csv`
 - `paper_tables/revision_cfc_dt_tau_ablation_summary.csv`
+- `paper_tables/revision_cfc_dt_tau_ablation_stats.json`
 - `paper_tables/revision_tau_occlusion_channel_summary.csv`
 - `paper_tables/tau_local_window_stats.json`
 - `paper_tables/bnci2014_004_aux_summary.csv`

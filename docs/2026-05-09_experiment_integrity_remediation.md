@@ -405,6 +405,107 @@ Import-Csv supporting_materials/reproducibility/artifact_manifest.csv | Measure-
 - [ ] `artifact_manifest.csv` 更新。
 - [ ] 论文正文和 response letter 只引用通过验收的表和图。
 
+## 8. 2026-05-09 full session-wise 补救结果
+
+### 8.1 原 7 模型 full session-wise 已重跑完成
+
+输出目录：
+
+```text
+outputs/bspc_sessionwise_full_rerun/
+```
+
+验收结果：
+
+- `63/63` runs 完成。
+- 9 subjects。
+- 7 models。
+- `epochs=80`, `patience=20`, `min_epochs=25`。
+- `device=cuda`。
+- `tau` 不再停留在初始化值附近。
+
+主结果：
+
+| Model | Accuracy mean | Accuracy std | F1 mean |
+|---|---:|---:|---:|
+| Riemann-TSLR | 62.81 | 12.73 | 0.617 |
+| Shallow ConvNet | 59.45 | 15.43 | 0.585 |
+| Tiny-Transformer | 46.84 | 15.85 | 0.428 |
+| EEGNet | 45.52 | 15.54 | 0.426 |
+| CfC-style | 45.10 | 12.90 | 0.430 |
+| Hybrid-CfC-style | 45.02 | 12.28 | 0.418 |
+| LSTM | 38.81 | 10.36 | 0.359 |
+
+### 8.2 MI-Mamba / stronger hybrid session-wise 已补跑完成
+
+输出目录：
+
+```text
+outputs/revision_mamba_hybrid_sessionwise/
+```
+
+结果：
+
+| Model | Accuracy mean | Accuracy std | F1 mean |
+|---|---:|---:|---:|
+| MI-Mamba-style | 48.38 | 17.96 | 0.447 |
+| SpatialSpectral-Head | 44.56 | 14.82 | 0.409 |
+| SpatialSpectral-CfC | 38.31 | 12.13 | 0.348 |
+
+合并 10 模型 session-wise 排序：
+
+| Model | Accuracy mean |
+|---|---:|
+| Riemann-TSLR | 62.81 |
+| Shallow ConvNet | 59.45 |
+| MI-Mamba-style | 48.38 |
+| Tiny-Transformer | 46.84 |
+| EEGNet | 45.52 |
+| CfC-style | 45.10 |
+| Hybrid-CfC-style | 45.02 |
+| SpatialSpectral-Head | 44.56 |
+| LSTM | 38.81 |
+| SpatialSpectral-CfC | 38.31 |
+
+解释：
+
+- MI-Mamba-style 是新增 sequence/SSM 类模型中最强的，但仍低于 Riemann-TSLR 和 Shallow ConvNet。
+- SpatialSpectral-Head 接近 CfC/EEGNet 中间层。
+- SpatialSpectral-CfC 低于 frontend-only head，说明当前 CfC 后端没有给这个 frontend 带来稳定协同收益。
+
+### 8.3 Tau 机制结论更新
+
+新 `tau_stats.json` 来自完整 session-wise 重跑，不再是初始化噪声。
+
+关键结果：
+
+- Friedman subject-class test: `p = 0.706`，仍不支持稳定类别分离。
+- class mean tau:
+  - left hand: `1.565`
+  - right hand: `1.574`
+  - feet: `1.631`
+  - tongue: `1.616`
+- pairwise raw p-values all `>= 0.152`。
+- tau vs mu power: `r = 0.792`, `p = 8.95e-09`。
+- tau vs beta power: `r = 0.108`, `p = 0.529`。
+
+论文写法需要从“tau 与 mu/beta correlations vanish”改为：
+
+> tau tracks part of the mu-band sensorimotor state but does not form a stable class biomarker.
+
+### 8.4 已同步文件
+
+- `supporting_materials/paper_tables/sessionwise_table.csv`
+- `supporting_materials/paper_tables/sessionwise_extended_revision_table.csv`
+- `supporting_materials/paper_tables/revision_mamba_hybrid_sessionwise_table.csv`
+- `supporting_materials/subject_results/sessionwise_subject_scores.csv`
+- `supporting_materials/subject_results/sessionwise_extended_revision_metrics.csv`
+- `supporting_materials/subject_results/revision_mamba_hybrid_sessionwise_metrics.csv`
+- `supporting_materials/tau_analysis/tau_stats.json`
+- `supporting_materials/tau_analysis/tau_timecourse_by_class.pdf`
+- `supporting_materials/reproducibility/sessionwise_results_summary.json`
+- `supporting_materials/reproducibility/revision_mamba_hybrid_sessionwise_results_summary.json`
+
 ## 7. 2026-05-09 已执行的补救动作
 
 - 新增 `scripts/repair_mamba_pooled_summary.py`：从 `fold_metrics.csv` 重建 `revision_mamba_pooled/results_summary.json`、`stat_tests.csv`、`subject_summary.csv` 和完整 `parameter_counts`，用于修复“config 只显示 hybrid_cfc 但 summary 有 8 个模型”的 provenance 问题。

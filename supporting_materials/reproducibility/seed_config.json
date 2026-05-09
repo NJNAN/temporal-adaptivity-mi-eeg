@@ -1,11 +1,11 @@
 {
-  "git_commit": "2c7ba6763d9eacecc0732215417ae3371d34a1f4",
+  "git_commit": "f102d0ebbff98ff22fddf3a75259f3d87441fbc0",
   "pooled_cv_seed": 20260318,
   "sessionwise_seed": 20260320,
   "grouped_cv_seed": 20260321,
   "downsample_factor": 2,
   "val_fraction": 0.15,
-  "structured_repeats": 0,
+  "structured_repeats": 5,
   "subjects": [
     1,
     2,
@@ -20,11 +20,14 @@
   "scripts": {
     "pooled": "scripts/run_mi_experiments.py",
     "sessionwise": "scripts/run_sessionwise_mi_comparison.py",
+    "sessionwise_source": "outputs\\bspc_sessionwise_full_rerun",
     "grouped_cv": "scripts/run_grouped_pooled_control.py",
     "perturbation_sweep": "scripts/run_structured_perturbation_sweep.py",
     "temporal_shuffle": "scripts/run_temporal_shuffle_control.py",
     "bnci_aux": "scripts/run_bnci2014_004_aux.py",
     "loso_revision": "scripts/run_loso_cross_subject.py",
+    "loso_riemann_alignment": "scripts/run_loso_riemann_alignment_check.py",
+    "repair_mamba_pooled": "scripts/repair_mamba_pooled_summary.py",
     "cfc_dt_tau_ablation": "scripts/run_cfc_dt_tau_ablation.py",
     "tau_topography": "scripts/run_tau_topography.py",
     "environment_check": "scripts/check_environment.py",

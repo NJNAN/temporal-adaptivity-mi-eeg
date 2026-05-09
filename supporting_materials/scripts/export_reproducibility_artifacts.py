@@ -164,7 +164,9 @@ def main() -> None:
     sessionwise = load_module(repo_root / "scripts" / "run_sessionwise_mi_comparison.py", "mi_exp_session_export")
 
     pooled_dir = repo_root / "outputs" / "bspc_pooled"
-    session_dir = repo_root / "outputs" / "bspc_sessionwise"
+    session_dir = repo_root / "outputs" / "bspc_sessionwise_full_rerun"
+    if not session_dir.exists():
+        session_dir = repo_root / "outputs" / "bspc_sessionwise"
     grouped_dir = repo_root / "outputs" / "bspc_grouped_cv"
     gru_pooled_dir = repo_root / "outputs" / "bspc_gru_pooled"
     gru_session_dir = repo_root / "outputs" / "bspc_gru_sessionwise"
@@ -174,6 +176,7 @@ def main() -> None:
     bnci_aux_dir = repo_root / "outputs" / "bnci2014_004_aux"
     tau_control_dir = repo_root / "outputs" / "bspc_tau_controls"
     revision_mamba_dir = repo_root / "outputs" / "revision_mamba_pooled"
+    revision_mamba_hybrid_session_dir = repo_root / "outputs" / "revision_mamba_hybrid_sessionwise"
     revision_loso_dir = repo_root / "outputs" / "revision_loso"
     revision_loso_alignment_dir = repo_root / "outputs" / "revision_loso_riemann_alignment"
     revision_tau_topography_dir = repo_root / "outputs" / "revision_tau_topography"
@@ -201,11 +204,14 @@ def main() -> None:
     session_table_order = [
         "Riemann-TSLR",
         "Shallow ConvNet",
-        "Hybrid-CfC-style",
+        "MI-Mamba-style",
         "Tiny-Transformer",
         "EEGNet",
         "CfC-style",
+        "Hybrid-CfC-style",
+        "SpatialSpectral-Head",
         "LSTM",
+        "SpatialSpectral-CfC",
     ]
     grouped_table_order = [
         "Riemann-TSLR",
@@ -473,6 +479,50 @@ def main() -> None:
         copy_if_exists(revision_mamba_dir / "confusion_matrices.csv", paper_dir / "revision_mamba_pooled_confusion_matrices.csv")
         copy_if_exists(revision_mamba_dir / "confusion_matrices.pdf", paper_dir / "revision_mamba_pooled_confusion_matrices.pdf")
 
+    revision_mamba_session_results = export_revision_summary_table(
+        revision_mamba_hybrid_session_dir / "sessionwise_results_summary.json",
+        paper_dir / "revision_mamba_hybrid_sessionwise_table.csv",
+        core.get_model_display_name,
+        [
+            "MI-Mamba-style",
+            "SpatialSpectral-Head",
+            "SpatialSpectral-CfC",
+        ],
+    )
+    if revision_mamba_session_results is not None:
+        key_stats["revision_mamba_hybrid_sessionwise"] = {
+            "summary": revision_mamba_session_results["summary"],
+            "stat_tests": revision_mamba_session_results.get("stat_tests", {}),
+            "note": "Session-wise revision extension for MI-Mamba-style and spatial-spectral hybrid controls.",
+        }
+        copy_if_exists(
+            revision_mamba_hybrid_session_dir / "sessionwise_metrics.csv",
+            paper_dir / "revision_mamba_hybrid_sessionwise_metrics.csv",
+        )
+        copy_if_exists(
+            revision_mamba_hybrid_session_dir / "sessionwise_results_summary.json",
+            paper_dir / "revision_mamba_hybrid_sessionwise_results_summary.json",
+        )
+        if (paper_dir / "sessionwise_table.csv").exists():
+            main_session_table = pd.read_csv(paper_dir / "sessionwise_table.csv")
+            revision_session_table = pd.read_csv(paper_dir / "revision_mamba_hybrid_sessionwise_table.csv")
+            extended_table = pd.concat([main_session_table, revision_session_table], ignore_index=True)
+            extended_table["sort_key"] = extended_table["model_display"].map(
+                {name: index for index, name in enumerate(session_table_order)}
+            ).fillna(999)
+            extended_table = extended_table.sort_values(["sort_key", "model_display"]).drop(columns=["sort_key"])
+            extended_table.to_csv(
+                paper_dir / "sessionwise_extended_revision_table.csv",
+                index=False,
+            )
+        if (session_dir / "sessionwise_metrics.csv").exists():
+            main_session_metrics = pd.read_csv(session_dir / "sessionwise_metrics.csv")
+            revision_session_metrics = pd.read_csv(paper_dir / "revision_mamba_hybrid_sessionwise_metrics.csv")
+            pd.concat([main_session_metrics, revision_session_metrics], ignore_index=True).to_csv(
+                paper_dir / "sessionwise_extended_revision_metrics.csv",
+                index=False,
+            )
+
     revision_loso_results = export_revision_summary_table(
         revision_loso_dir / "loso_results_summary.json",
         paper_dir / "revision_loso_table.csv",
@@ -632,6 +682,7 @@ def main() -> None:
         "scripts": {
             "pooled": "scripts/run_mi_experiments.py",
             "sessionwise": "scripts/run_sessionwise_mi_comparison.py",
+            "sessionwise_source": str(session_dir.relative_to(repo_root)),
             "grouped_cv": "scripts/run_grouped_pooled_control.py",
             "perturbation_sweep": "scripts/run_structured_perturbation_sweep.py",
             "temporal_shuffle": "scripts/run_temporal_shuffle_control.py",
@@ -653,11 +704,13 @@ def main() -> None:
         "paper_tables": [
             (paper_dir / "main_table.csv", "main_table.csv"),
             (paper_dir / "sessionwise_table.csv", "sessionwise_table.csv"),
+            (paper_dir / "sessionwise_extended_revision_table.csv", "sessionwise_extended_revision_table.csv"),
             (paper_dir / "grouped_cv_table.csv", "grouped_cv_table.csv"),
             (paper_dir / "recurrent_control_table.csv", "recurrent_control_table.csv"),
             (paper_dir / "perturbation_sweep_summary.csv", "perturbation_sweep_summary.csv"),
             (paper_dir / "temporal_shuffle_summary.csv", "temporal_shuffle_summary.csv"),
             (paper_dir / "revision_mamba_pooled_table.csv", "revision_mamba_pooled_table.csv"),
+            (paper_dir / "revision_mamba_hybrid_sessionwise_table.csv", "revision_mamba_hybrid_sessionwise_table.csv"),
             (paper_dir / "revision_loso_table.csv", "revision_loso_table.csv"),
             (paper_dir / "revision_loso_riemann_alignment_summary.csv", "revision_loso_riemann_alignment_summary.csv"),
             (paper_dir / "revision_cfc_dt_tau_ablation_summary.csv", "revision_cfc_dt_tau_ablation_summary.csv"),
@@ -678,8 +731,10 @@ def main() -> None:
         "subject_results": [
             (paper_dir / "pooled_subject_scores.csv", "pooled_subject_scores.csv"),
             (paper_dir / "sessionwise_subject_scores.csv", "sessionwise_subject_scores.csv"),
+            (paper_dir / "sessionwise_extended_revision_metrics.csv", "sessionwise_extended_revision_metrics.csv"),
             (paper_dir / "grouped_subject_scores.csv", "grouped_subject_scores.csv"),
             (paper_dir / "revision_mamba_pooled_subject_scores.csv", "revision_mamba_pooled_subject_scores.csv"),
+            (paper_dir / "revision_mamba_hybrid_sessionwise_metrics.csv", "revision_mamba_hybrid_sessionwise_metrics.csv"),
             (paper_dir / "revision_loso_metrics.csv", "revision_loso_metrics.csv"),
             (paper_dir / "revision_loso_assignments.csv", "revision_loso_assignments.csv"),
             (paper_dir / "revision_loso_riemann_alignment_metrics.csv", "revision_loso_riemann_alignment_metrics.csv"),
@@ -761,6 +816,11 @@ def main() -> None:
         "reproducibility": [
             (paper_dir / "seed_config.json", "seed_config.json"),
             (paper_dir / "environment_check.json", "environment_check.json"),
+            (paper_dir / "sessionwise_results_summary.json", "sessionwise_results_summary.json"),
+            (
+                paper_dir / "revision_mamba_hybrid_sessionwise_results_summary.json",
+                "revision_mamba_hybrid_sessionwise_results_summary.json",
+            ),
             (paper_dir / "bnci2014_004_results_summary.json", "bnci2014_004_results_summary.json"),
             (repo_root / "REPRODUCIBILITY.md", "REPRODUCIBILITY.md"),
         ],

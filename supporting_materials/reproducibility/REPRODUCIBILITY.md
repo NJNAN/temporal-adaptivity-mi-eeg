@@ -79,6 +79,8 @@ Full exported configuration is in:
 - `outputs/paper_ready/temporal_shuffle_results_summary.json`
 - `outputs/paper_ready/main_table.csv`
 - `outputs/paper_ready/sessionwise_table.csv`
+- `outputs/paper_ready/sessionwise_extended_revision_table.csv`
+- `outputs/paper_ready/revision_mamba_hybrid_sessionwise_table.csv`
 - `outputs/paper_ready/grouped_cv_table.csv`
 - `outputs/paper_ready/structured_perturbation_table.csv`
 - `outputs/paper_ready/pooled_stats.csv`
@@ -87,6 +89,8 @@ Full exported configuration is in:
 - `outputs/paper_ready/structured_perturbation_stats.csv`
 - `outputs/paper_ready/revision_mamba_pooled_table.csv`
 - `outputs/paper_ready/revision_mamba_pooled_subject_scores.csv`
+- `outputs/paper_ready/revision_mamba_hybrid_sessionwise_metrics.csv`
+- `outputs/paper_ready/sessionwise_extended_revision_metrics.csv`
 - `outputs/paper_ready/revision_loso_table.csv`
 - `outputs/paper_ready/revision_loso_metrics.csv`
 - `outputs/paper_ready/revision_loso_assignments.csv`
@@ -118,7 +122,7 @@ Key submission-facing copies are:
 
 ```powershell
 python scripts/run_mi_experiments.py --device cuda --output-dir outputs/bspc_pooled
-python scripts/run_sessionwise_mi_comparison.py --device cuda --output-dir outputs/bspc_sessionwise
+python scripts/run_sessionwise_mi_comparison.py --device cuda --output-dir outputs/bspc_sessionwise_full_rerun
 python scripts/run_grouped_pooled_control.py --models shallow_convnet riemann_tslr eegnet hybrid_cfc tiny_transformer cfc lstm --device cuda --output-dir outputs/bspc_grouped_cv
 python scripts/run_mi_experiments.py --models gru --device cuda --output-dir outputs/bspc_gru_pooled
 python scripts/run_sessionwise_mi_comparison.py --models gru --device cuda --output-dir outputs/bspc_gru_sessionwise
@@ -132,6 +136,7 @@ python scripts/benchmark_model_efficiency.py
 python scripts/export_reproducibility_artifacts.py
 python scripts/check_environment.py --output outputs/paper_ready/environment_check.json
 python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
+python scripts/run_sessionwise_mi_comparison.py --models mi_mamba ss_cfc ss_head --device cuda --output-dir outputs/revision_mamba_hybrid_sessionwise
 python scripts/run_loso_cross_subject.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_loso
 python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
 python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography

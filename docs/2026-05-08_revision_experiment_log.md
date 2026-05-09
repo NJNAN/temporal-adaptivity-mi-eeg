@@ -281,10 +281,10 @@ The minimal Hybrid-CfC diagnostic improves over pure CfC but remains below the s
 | 审稿意见 | 当前状态 | 结果倾向 |
 |---|---|---|
 | 1. IV-2a 外推边界 | 主要靠改稿收缩主张 | 利好，结论更稳 |
-| 2. Mamba / MI-Mamba 缺失 | pooled 已完成，sessionwise/grouped 未完成 | 高利好 |
+| 2. Mamba / MI-Mamba 缺失 | pooled 和 sessionwise 已完成，grouped 未完成 | 高利好 |
 | 3. Cross-subject / LOSO | 已完成 | 中高利好 |
 | 4. Tau topography | 已完成 | 高利好，但需谨慎解释 |
-| 5. Hybrid-CfC 太弱 | Hybrid-CfC pooled 已补，SS-CfC 消融进行中 | 中等利好 |
+| 5. Hybrid-CfC 太弱 | Hybrid-CfC、SS-Head、SS-CfC sessionwise 已补 | 中等利好 |
 | 6. Delta t / tau init 任意 | 已完成 27 行 sweep | 中高利好 |
 | 7. Reproducibility | README/requirements 已有，仍需 environment check 和 manifest | 需继续补 |
 | 8. arXiv 状态 | Mamba 已初步更新，仍需最终核查 | 需继续补 |
@@ -295,7 +295,7 @@ The minimal Hybrid-CfC diagnostic improves over pure CfC but remains below the s
 
 新增结果没有推翻论文核心结论，反而让结论更细、更能抗审稿：
 
-- `MI-Mamba-style` 提升了 temporal/SSM baseline，但仍不超过 Shallow/Riemann。
+- `MI-Mamba-style` 提升了 temporal/SSM baseline，但在 pooled 和 session-wise 中仍不超过 Shallow/Riemann。
 - LOSO 显示 cross-subject 主要问题是 subject shift，temporal models 没有稳定优势。
 - Tau topography 显示 tau 受 sensorimotor channels 影响，但不等于 class-discriminative biomarker。
 - Hybrid-CfC 小幅优于 pure CfC，说明空间前端有帮助，但不足以追上强 spatial/geometric priors。
@@ -308,7 +308,7 @@ Temporal adaptivity is useful but not sufficient. In standard cue-locked four-cl
 
 ## 7. 下一步任务
 
-1. 重跑完整 full session-wise 主实验，修复被 smoke test 覆盖的 `outputs/bspc_sessionwise` 证据链。
+1. full session-wise 主实验已重跑完成，当前有效来源为 `outputs/bspc_sessionwise_full_rerun`。
 2. 修 `run_loso_cross_subject.py`：
    - 增加 `heldout_subject` 别名列。
    - 增加真正的断点续跑读取逻辑。
@@ -322,3 +322,35 @@ Temporal adaptivity is useful but not sufficient. In standard cue-locked four-cl
 6. 增加 `scripts/check_environment.py` 和 artifact manifest。
 7. 复核 BibTeX 中 arXiv preprint 的最终发表状态。
 8. commit 并 push 到 GitHub。
+
+## 8. 2026-05-09 补救后新增 session-wise 结果
+
+有效主结果目录：
+
+```text
+outputs/bspc_sessionwise_full_rerun/
+outputs/revision_mamba_hybrid_sessionwise/
+```
+
+合并 10 模型 session-wise 排序：
+
+| Model | Accuracy mean | Accuracy std | Macro-F1 mean |
+|---|---:|---:|---:|
+| Riemann-TSLR | 62.81 | 12.73 | 0.617 |
+| Shallow ConvNet | 59.45 | 15.43 | 0.585 |
+| MI-Mamba-style | 48.38 | 17.96 | 0.447 |
+| Tiny-Transformer | 46.84 | 15.85 | 0.428 |
+| EEGNet | 45.52 | 15.54 | 0.426 |
+| CfC-style | 45.10 | 12.90 | 0.430 |
+| Hybrid-CfC-style | 45.02 | 12.28 | 0.418 |
+| SpatialSpectral-Head | 44.56 | 14.82 | 0.409 |
+| LSTM | 38.81 | 10.36 | 0.359 |
+| SpatialSpectral-CfC | 38.31 | 12.13 | 0.348 |
+
+新 tau 结果不再是初始化噪声：
+
+- Friedman subject-class test: `p = 0.706`
+- tau vs mu power: `r = 0.792`, `p = 8.95e-09`
+- tau vs beta power: `r = 0.108`, `p = 0.529`
+
+论文结论需要从“tau 与 mu/beta correlations vanish”改成更精确的表述：tau 与 mu-band 状态有关，但没有形成稳定 class biomarker。

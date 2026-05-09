@@ -25,6 +25,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 
 - `paper_tables/main_table.csv`
 - `paper_tables/sessionwise_table.csv`
+- `paper_tables/sessionwise_extended_revision_table.csv`
+- `paper_tables/revision_mamba_hybrid_sessionwise_table.csv`
 - `paper_tables/grouped_cv_table.csv`
 - `paper_tables/recurrent_control_table.csv`
 - `paper_tables/sessionwise_seed_model_summary.csv`
@@ -49,6 +51,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `paper_tables/key_stats.json`
 - `subject_results/pooled_subject_scores.csv`
 - `subject_results/sessionwise_subject_scores.csv`
+- `subject_results/sessionwise_extended_revision_metrics.csv`
+- `subject_results/revision_mamba_hybrid_sessionwise_metrics.csv`
 - `subject_results/grouped_subject_scores.csv`
 - `subject_results/gru_pooled_subject_scores.csv`
 - `subject_results/gru_sessionwise_subject_scores.csv`
@@ -80,6 +84,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `efficiency/benchmark.csv`
 - `reproducibility/seed_config.json`
 - `reproducibility/environment_check.json`
+- `reproducibility/sessionwise_results_summary.json`
+- `reproducibility/revision_mamba_hybrid_sessionwise_results_summary.json`
 - `reproducibility/seed_variability_summary.json`
 - `reproducibility/seed_rankings.csv`
 - `reproducibility/bnci2014_004_results_summary.json`
@@ -98,6 +104,6 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - The auxiliary BNCI2014-004 sanity check is a supporting-only binary-MI result and is not used as a third main benchmark table because its label space and channel count differ from BCI IV-2a; in that auxiliary run, Shallow ConvNet remains first while the CfC-style vs. LSTM gap largely disappears.
 - The perturbation sweep evaluates `SNR = 20, 10, 5, 0 dB` and channel-dropout fractions `0.1, 0.3, 0.5` with five random seeds per subject-model condition.
 - The temporal-shuffle control keeps training fixed and randomizes within-trial time order only at test time, using one permutation per trial shared across all channels. It is included as a supplementary diagnostic to test whether preserving temporal order creates any distinct CfC-style advantage.
-- The reviewer-revision exports include a PyTorch `MI-Mamba-style` surrogate under the shared protocol, a leave-one-subject-out cross-subject benchmark, a `Delta t` / `tau` initialization ablation snapshot, and a channel-wise `tau` sensitivity topography.
+- The reviewer-revision exports include a PyTorch `MI-Mamba-style` surrogate under the shared pooled and session-wise protocols, a leave-one-subject-out cross-subject benchmark, a complete `Delta t` / `tau` initialization ablation, and a channel-wise `tau` sensitivity topography.
 - The LOSO Riemann alignment diagnostic is reported separately from the main raw LOSO protocol because Euclidean Alignment uses each subject's unlabeled trials for test-time unsupervised alignment.
 - `CfC-style` denotes the implemented exponential-decay variant studied in this repository; it is intentionally distinguished from every canonical smoothed-gate CfC instantiation.

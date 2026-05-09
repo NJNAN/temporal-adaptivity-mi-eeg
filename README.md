@@ -90,7 +90,7 @@ python scripts/run_mi_experiments.py --device cuda --output-dir outputs/bspc_poo
 Session-wise benchmark:
 
 ```powershell
-python scripts/run_sessionwise_mi_comparison.py --device cuda --output-dir outputs/bspc_sessionwise
+python scripts/run_sessionwise_mi_comparison.py --device cuda --output-dir outputs/bspc_sessionwise_full_rerun
 ```
 
 Grouped pooled control using `session+run` groups:
@@ -150,6 +150,8 @@ python scripts/export_reproducibility_artifacts.py
 ```
 
 The export step copies the curated revision results from `outputs/revision_*` into `outputs/paper_ready/` and `supporting_materials/`, including `revision_mamba_pooled_table.csv`, `revision_loso_table.csv`, `revision_cfc_dt_tau_ablation_summary.csv`, `revision_tau_occlusion_channel_summary.csv`, and `revision_tau_occlusion_topomap_global.pdf`. It also writes `outputs/paper_ready/artifact_manifest.csv` and `supporting_materials/reproducibility/artifact_manifest.csv`.
+
+After the 2026-05-09 integrity audit, the valid regenerated session-wise source is `outputs/bspc_sessionwise_full_rerun/`. The revision session-wise extension for `MI-Mamba-style`, `SpatialSpectral-Head`, and `SpatialSpectral-CfC` is stored in `outputs/revision_mamba_hybrid_sessionwise/`.
 
 More detail is available in `REPRODUCIBILITY.md`.
 

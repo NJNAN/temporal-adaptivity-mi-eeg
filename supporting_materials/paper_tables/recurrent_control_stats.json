@@ -15,71 +15,71 @@
   "pooled": {
     "cfc_vs_gru": {
       "t_statistic": 3.688028778596691,
-      "p_value": 0.006147628636725849,
+      "p_value": 0.006147628636725848,
       "cohen_d": 1.2293429221370042,
       "wilcoxon_statistic": 2.0,
       "wilcoxon_p_value": 0.01171875,
       "mean_diff": 3.720639680159918,
       "n_subjects": 9,
-      "holm_p_value": 0.006147628636725849,
+      "holm_p_value": 0.006147628636725848,
       "wilcoxon_holm_p_value": 0.015625
     },
     "gru_vs_lstm": {
       "t_statistic": 4.2341616294170095,
-      "p_value": 0.002860106840833109,
+      "p_value": 0.0028601068408331083,
       "cohen_d": 1.4113872046482216,
       "wilcoxon_statistic": 1.0,
       "wilcoxon_p_value": 0.0078125,
       "mean_diff": 3.8624021322671984,
       "n_subjects": 9,
-      "holm_p_value": 0.005720213681666218,
+      "holm_p_value": 0.0057202136816662166,
       "wilcoxon_holm_p_value": 0.015625
     },
     "cfc_vs_lstm": {
       "t_statistic": 5.072779876874538,
-      "p_value": 0.0009616905211739223,
+      "p_value": 0.000961690521173923,
       "cohen_d": 1.6909266218542844,
       "wilcoxon_statistic": 0.0,
       "wilcoxon_p_value": 0.00390625,
       "mean_diff": 7.583041812427116,
       "n_subjects": 9,
-      "holm_p_value": 0.002885071563521767,
+      "holm_p_value": 0.002885071563521769,
       "wilcoxon_holm_p_value": 0.01171875
     }
   },
   "sessionwise": {
     "cfc_vs_gru": {
-      "t_statistic": 2.124775914356676,
-      "p_value": 0.06633024393745778,
-      "cohen_d": 0.7082586368186662,
-      "wilcoxon_statistic": 4.5,
-      "wilcoxon_p_value": 0.03125,
-      "mean_diff": 3.858024691358023,
+      "t_statistic": 2.051924581866529,
+      "p_value": 0.07428584492420515,
+      "cohen_d": 0.6839748596363278,
+      "wilcoxon_statistic": 5.0,
+      "wilcoxon_p_value": 0.078125,
+      "mean_diff": 4.74537037037037,
       "n_subjects": 9,
-      "holm_p_value": 0.13266048787491555,
-      "wilcoxon_holm_p_value": 0.0625
+      "holm_p_value": 0.1485716898484103,
+      "wilcoxon_holm_p_value": 0.15625
     },
     "gru_vs_lstm": {
-      "t_statistic": 1.341672489910599,
-      "p_value": 0.2165374465350078,
-      "cohen_d": 0.4472241621765232,
-      "wilcoxon_statistic": 12.5,
-      "wilcoxon_p_value": 0.26171875,
-      "mean_diff": 1.7746913580246941,
+      "t_statistic": 0.9743065291254758,
+      "p_value": 0.3584400907919582,
+      "cohen_d": 0.3247688423583485,
+      "wilcoxon_statistic": 13.0,
+      "wilcoxon_p_value": 0.30078125,
+      "mean_diff": 1.5432098765432123,
       "n_subjects": 9,
-      "holm_p_value": 0.2165374465350078,
-      "wilcoxon_holm_p_value": 0.26171875
+      "holm_p_value": 0.3584400907919582,
+      "wilcoxon_holm_p_value": 0.30078125
     },
     "cfc_vs_lstm": {
-      "t_statistic": 3.5127223807011054,
-      "p_value": 0.007929914652069525,
-      "cohen_d": 1.1709074577996643,
-      "wilcoxon_statistic": 2.0,
-      "wilcoxon_p_value": 0.01171875,
-      "mean_diff": 5.632716049382718,
+      "t_statistic": 3.352816623429445,
+      "p_value": 0.010038231623101815,
+      "cohen_d": 1.1176055391569415,
+      "wilcoxon_statistic": 3.5,
+      "wilcoxon_p_value": 0.0234375,
+      "mean_diff": 6.288580246913582,
       "n_subjects": 9,
-      "holm_p_value": 0.023789743956208573,
-      "wilcoxon_holm_p_value": 0.03515625
+      "holm_p_value": 0.030114694869305444,
+      "wilcoxon_holm_p_value": 0.0703125
     }
   }
 }

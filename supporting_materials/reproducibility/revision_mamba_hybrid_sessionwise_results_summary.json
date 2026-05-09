@@ -1,0 +1,219 @@
+{
+  "generated_at": "2026-05-09 08:38:03",
+  "device": "cuda",
+  "config": {
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "models": [
+      "mi_mamba",
+      "ss_cfc",
+      "ss_head"
+    ],
+    "epochs": 80,
+    "patience": 20,
+    "min_epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "val_fraction": 0.15,
+    "seed": 20260320,
+    "cfc_hidden_size": 128,
+    "lstm_hidden_size": 128,
+    "cfc_dt": 1.0,
+    "cfc_tau_init": 1.0,
+    "downsample_factor": 2,
+    "structured_repeats": 5,
+    "device": "cuda",
+    "data_dir": "data",
+    "output_dir": "outputs/revision_mamba_hybrid_sessionwise"
+  },
+  "parameter_counts": {
+    "mi_mamba": 298740,
+    "ss_cfc": 125372,
+    "ss_head": 36604
+  },
+  "summary": {
+    "mi_mamba": {
+      "accuracy_mean": 48.37962962962963,
+      "accuracy_std": 17.96266838843038,
+      "f1_mean": 0.4473002494118378,
+      "f1_std": 0.19246280368894408
+    },
+    "ss_cfc": {
+      "accuracy_mean": 38.31018518518519,
+      "accuracy_std": 12.129193385214283,
+      "f1_mean": 0.3477287543192541,
+      "f1_std": 0.14044854125763606
+    },
+    "ss_head": {
+      "accuracy_mean": 44.56018518518518,
+      "accuracy_std": 14.81504086922443,
+      "f1_mean": 0.40859239677775605,
+      "f1_std": 0.17462814067345148
+    }
+  },
+  "stat_tests": {
+    "mi_mamba_vs_ss_cfc": {
+      "t_statistic": 2.7966470680161155,
+      "p_value": 0.023318065890841722,
+      "cohen_d": 0.9322156884756723,
+      "wilcoxon_statistic": 5.0,
+      "wilcoxon_p_value": 0.0390625,
+      "mean_diff": 10.069444444444441,
+      "n_subjects": 9,
+      "holm_p_value": 0.06995419767252517,
+      "wilcoxon_holm_p_value": 0.08203125
+    },
+    "mi_mamba_vs_ss_head": {
+      "t_statistic": 1.0990844775775488,
+      "p_value": 0.3037036101042179,
+      "cohen_d": 0.3663614921744353,
+      "wilcoxon_statistic": 15.0,
+      "wilcoxon_p_value": 0.42578125,
+      "mean_diff": 3.8194444444444446,
+      "n_subjects": 9,
+      "holm_p_value": 0.3037036101042179,
+      "wilcoxon_holm_p_value": 0.42578125
+    },
+    "ss_cfc_vs_ss_head": {
+      "t_statistic": -2.5605648617965353,
+      "p_value": 0.0336174119298922,
+      "cohen_d": -0.8535216194332464,
+      "wilcoxon_statistic": 4.0,
+      "wilcoxon_p_value": 0.02734375,
+      "mean_diff": -6.249999999999997,
+      "n_subjects": 9,
+      "holm_p_value": 0.06995419767252517,
+      "wilcoxon_holm_p_value": 0.08203125
+    }
+  },
+  "subject_stability": {},
+  "tau_analysis": {},
+  "structured_perturbation_summary": {
+    "mi_mamba": {
+      "band_limited_5db": {
+        "mean": 29.29012345679012,
+        "std": 5.890692057386127,
+        "ci95_low": 24.762136708941206,
+        "ci95_high": 33.818110204639034
+      },
+      "channel_dropout_30pct": {
+        "mean": 33.58024691358025,
+        "std": 7.133715084276571,
+        "ci95_low": 28.096788085676877,
+        "ci95_high": 39.063705741483616
+      }
+    },
+    "ss_cfc": {
+      "band_limited_5db": {
+        "mean": 37.708333333333336,
+        "std": 11.244854790492372,
+        "ci95_low": 29.064772784451407,
+        "ci95_high": 46.351893882215265
+      },
+      "channel_dropout_30pct": {
+        "mean": 30.439814814814813,
+        "std": 6.103214595199955,
+        "ci95_low": 25.748468783291642,
+        "ci95_high": 35.131160846337984
+      }
+    },
+    "ss_head": {
+      "band_limited_5db": {
+        "mean": 42.986111111111114,
+        "std": 14.119099062381189,
+        "ci95_low": 32.13321083670836,
+        "ci95_high": 53.83901138551387
+      },
+      "channel_dropout_30pct": {
+        "mean": 32.70061728395061,
+        "std": 7.058733533215113,
+        "ci95_low": 27.274794378317825,
+        "ci95_high": 38.1264401895834
+      }
+    }
+  },
+  "structured_perturbation_tests": {
+    "mi_mamba_vs_ss_cfc": {
+      "band_limited_5db": {
+        "t_statistic": -2.101480791212429,
+        "p_value": 0.06877891115227087,
+        "cohen_d": -0.7004935964879168,
+        "wilcoxon_statistic": 10.0,
+        "wilcoxon_p_value": 0.1640625,
+        "mean_diff": -8.418209876543209,
+        "n_subjects": 9,
+        "holm_p_value": 0.34389455576135436,
+        "wilcoxon_holm_p_value": 0.65625
+      },
+      "channel_dropout_30pct": {
+        "t_statistic": 1.685469998757438,
+        "p_value": 0.13038675725680893,
+        "cohen_d": 0.561823331914044,
+        "wilcoxon_statistic": 10.0,
+        "wilcoxon_p_value": 0.1640625,
+        "mean_diff": 3.1404320987654306,
+        "n_subjects": 9,
+        "holm_p_value": 0.3911602717704268,
+        "wilcoxon_holm_p_value": 0.65625
+      }
+    },
+    "mi_mamba_vs_ss_head": {
+      "band_limited_5db": {
+        "t_statistic": -3.4911786565892338,
+        "p_value": 0.008184257561099233,
+        "cohen_d": -1.1637262178742784,
+        "wilcoxon_statistic": 2.0,
+        "wilcoxon_p_value": 0.01171875,
+        "mean_diff": -13.695987654320987,
+        "n_subjects": 9,
+        "holm_p_value": 0.0491055453665954,
+        "wilcoxon_holm_p_value": 0.0703125
+      },
+      "channel_dropout_30pct": {
+        "t_statistic": 1.0404127885674495,
+        "p_value": 0.32856751294597036,
+        "cohen_d": 0.34680426148850013,
+        "wilcoxon_statistic": 14.0,
+        "wilcoxon_p_value": 0.359375,
+        "mean_diff": 0.8796296296296305,
+        "n_subjects": 9,
+        "holm_p_value": 0.3911602717704268,
+        "wilcoxon_holm_p_value": 0.65625
+      }
+    },
+    "ss_cfc_vs_ss_head": {
+      "band_limited_5db": {
+        "t_statistic": -1.9838090945788658,
+        "p_value": 0.08256053086721636,
+        "cohen_d": -0.6612696973644293,
+        "wilcoxon_statistic": 8.0,
+        "wilcoxon_p_value": 0.09765625,
+        "mean_diff": -5.277777777777779,
+        "n_subjects": 9,
+        "holm_p_value": 0.34389455576135436,
+        "wilcoxon_holm_p_value": 0.48828125
+      },
+      "channel_dropout_30pct": {
+        "t_statistic": -1.5837317262553634,
+        "p_value": 0.15191347107092804,
+        "cohen_d": -0.5279105741857525,
+        "wilcoxon_statistic": 13.0,
+        "wilcoxon_p_value": 0.30078125,
+        "mean_diff": -2.2608024691358,
+        "n_subjects": 9,
+        "holm_p_value": 0.3911602717704268,
+        "wilcoxon_holm_p_value": 0.65625
+      }
+    }
+  }
+}

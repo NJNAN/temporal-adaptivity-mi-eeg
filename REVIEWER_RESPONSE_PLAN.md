@@ -421,8 +421,8 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
 | Bib key | 当前状态 | 计划 |
 |---|---|---|
 | `gu2023mamba` | OpenReview 显示 COLM 2024 已发表 | 更新为 COLM 2024 conference entry，保留 arXiv 号可选 |
-| `gui2024eegmamba` | arXiv v2，未发现同题正式出版 | 暂保留 `@misc`，revision 前再查一次 |
-| `agarwalla2024moabb` | arXiv 页面仍是 preprint；MOABB 文档链接到 HAL 页面 | 检查 HAL 是否有可引用版本；若无正式期刊/会议，保留 arXiv/HAL |
+| `gui2024eegmamba` | arXiv v2 / OpenReview under review，未发现同题正式出版；另有不同题目的 `EEGMamba: An EEG foundation model with Mamba` 已发表于 Neural Networks 2025 | 正文改引正式发表的 `wang2025eegmamba`；Gui et al. 不再作为正文参考文献 |
+| `chevallier2024moabb` | 官方 MOABB 文档与 HAL 页面仍给出 HAL/arXiv 工作论文；未找到可靠期刊 DOI | 修正作者为 Chevallier et al.，保留 HAL/arXiv 条目 |
 | `ingolfsson2020eegtcnet` | 有 IEEE SMC 2020 conference record | 更新为 conference paper，不只写 arXiv note |
 | `ju2022graphcspnet` | 已有 IEEE TNNLS DOI，当前条目基本正确 | 保留 article，arXiv note 可留 |
 | `chen2025nsa` | 当前条目写 IJCAI 2025 + DOI | 检查 DOI/页码是否最终稳定 |
@@ -488,7 +488,7 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
 - [ ] `Delta t/tau_init` sweep 完成，能回答是否因超参导致 CfC 失败。
 - [ ] 当前 Hybrid-CfC 的定位被修正，或新增 strong hybrid 对照。
 - [ ] README、requirements、environment check、run commands、artifact manifest 完成。
-- [ ] `references.bib` 中 Mamba、EEG-TCNet、MOABB/EEGMamba 等状态复核完成。
+- [x] `references.bib` 中 Mamba、EEG-TCNet、MOABB/EEGMamba 等状态复核完成。
 - [ ] 论文结论收缩到 cue-locked IV-2a / current protocol 范围。
 - [ ] supporting materials 同步更新。
 - [ ] response letter 能逐条引用新增表格、图和文件。

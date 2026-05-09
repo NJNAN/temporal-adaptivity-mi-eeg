@@ -99,7 +99,7 @@ The manuscript file was also renamed to the canonical `lnn_mi_eeg_paper.tex`.
 
 **Reviewer comment.** Some arXiv preprints should be checked for final publication status.
 
-**Response.** We checked the main cited preprints where publication status affected the manuscript framing. MI-Mamba is treated as a published article, while EEGMamba remains cited as a preprint if retained. We revised the text to avoid overstating unpublished models as established baselines.
+**Response.** We checked the main cited preprints where publication status affected the manuscript framing. MI-Mamba is treated as a published article. Gui et al.'s `EEGMamba: Bidirectional State Space Model with Mixture of Experts for EEG Multi-task Classification` remains an arXiv/OpenReview submission, so the manuscript now cites the formally published Neural Networks 2025 EEGMamba foundation-model article where an EEGMamba reference is needed. The MOABB benchmark citation was also corrected to Chevallier et al. and retained as the official HAL/arXiv working-paper citation used by the MOABB documentation.
 
 ## Current Revision Checklist
 

@@ -9,10 +9,10 @@ $env:PYTHONNOUSERSITE = "1"
 function Invoke-Step {
     param(
         [string]$Name,
-        [string[]]$Args
+        [string[]]$CommandArgs
     )
     Write-Host "===== $Name ====="
-    & $Python @Args
+    & $Python @CommandArgs
     if ($LASTEXITCODE -ne 0) {
         throw "$Name failed with exit code $LASTEXITCODE"
     }

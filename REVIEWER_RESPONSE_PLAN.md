@@ -1,6 +1,6 @@
 # 审稿意见解决计划
 
-本文档根据当前项目代码、`lnn_mi_eeg_paper (2).tex`、`references.bib`、`REPRODUCIBILITY.md` 和 `supporting_materials/` 梳理。目标不是立刻改论文，而是把 8 条审稿意见拆成可执行的补实验、改稿和复现任务。
+本文档根据当前项目代码、`lnn_mi_eeg_paper.tex`、`references.bib`、`REPRODUCIBILITY.md` 和 `supporting_materials/` 梳理。目标不是立刻改论文，而是把 8 条审稿意见拆成可执行的补实验、改稿和复现任务。
 
 ## 0. 当前稿件状态判断
 
@@ -55,7 +55,7 @@
 
 需要改的文件：
 
-- `lnn_mi_eeg_paper (2).tex`
+- `lnn_mi_eeg_paper.tex`
 - `supporting_materials/manuscript/lnn_mi_eeg_paper.tex`
 
 建议增加的句子方向：
@@ -365,7 +365,7 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
 - 已有 `REPRODUCIBILITY.md` 和 `supporting_materials/reproducibility/`。
 - 已有 seeds、split assignments、paper-ready tables。
 - 但还缺少严格 methods/release 级别的环境锁定和一键执行入口。
-- 当前 git 状态显示根目录原始 `lnn_mi_eeg_paper.tex` 被删除，实际稿件为 `lnn_mi_eeg_paper (2).tex`；提交前需要统一文件名。
+- 当前稿件已统一为根目录 `lnn_mi_eeg_paper.tex`，supporting copy 位于 `supporting_materials/manuscript/lnn_mi_eeg_paper.tex`。
 
 必须补强：
 
@@ -391,7 +391,7 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
   - 忽略 `__pycache__/`、`.pyc`、大数据缓存、临时 PDF/PNG。
   - 保留 `supporting_materials/` 中投稿需要的小表和图。
 - 统一论文文件名：
-  - 建议把 `lnn_mi_eeg_paper (2).tex` 复制/改名回 `lnn_mi_eeg_paper.tex`。
+  - 已把旧草稿文件名统一为 `lnn_mi_eeg_paper.tex`。
   - supporting copy 同步。
 
 论文改动：
@@ -430,7 +430,7 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
 需要改的文件：
 
 - `references.bib`
-- `lnn_mi_eeg_paper (2).tex` 中相关引用上下文。
+- `lnn_mi_eeg_paper.tex` 中相关引用上下文。
 
 建议做法：
 

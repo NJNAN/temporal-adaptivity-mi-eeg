@@ -511,7 +511,7 @@ outputs/revision_mamba_hybrid_sessionwise/
 - 新增 `scripts/repair_mamba_pooled_summary.py`：从 `fold_metrics.csv` 重建 `revision_mamba_pooled/results_summary.json`、`stat_tests.csv`、`subject_summary.csv` 和完整 `parameter_counts`，用于修复“config 只显示 hybrid_cfc 但 summary 有 8 个模型”的 provenance 问题。
 - 新增 `scripts/run_loso_riemann_alignment_check.py`：对 LOSO Riemann-TSLR 做 standard vs unsupervised Euclidean Alignment 诊断，用来判断 34% 是否主要来自跨被试 tangent-space/协方差对齐问题。
 - 更新 `scripts/run_cfc_dt_tau_ablation.py`：增加组合级断点跳过逻辑。以后如果长 sweep 中断，重启时会跳过 `ablation_summary.csv` 中已经完整出现的 dt/tau/model 组合。
-- 更新 `lnn_mi_eeg_paper (2).tex` 和 `supporting_materials/manuscript/lnn_mi_eeg_paper.tex`：删除 tau 分析段落中的旧硬编码统计值，改为明确说明这些数值必须等完整 session-wise 重跑后刷新。
+- 更新 `lnn_mi_eeg_paper.tex` 和 `supporting_materials/manuscript/lnn_mi_eeg_paper.tex`：删除 tau 分析段落中的旧硬编码统计值，改为明确说明这些数值必须等完整 session-wise 重跑后刷新。
 - 在 CfC 方法描述中补充默认 `dt=1.0, tau_init=1.0` 的初始 retention 解释：初始每步保留因子约为 `exp(-1)=0.37`，若 tau 保持在初始化附近，约 5 个 recurrent updates 后旧状态贡献低于 1%。这将作为 ablation 解释的模型设计边界。
 
 ### 7.1 LOSO Riemann alignment 诊断结果

@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-05-09 19:02:07",
+  "device": "cuda",
+  "config": {
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "models": [
+      "mi_mamba",
+      "ss_head",
+      "ss_cfc"
+    ],
+    "num_folds": 4,
+    "epochs": 80,
+    "patience": 20,
+    "min_epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "val_fraction": 0.2,
+    "seed": 20260321,
+    "cfc_hidden_size": 128,
+    "lstm_hidden_size": 128,
+    "downsample_factor": 2,
+    "device": "cuda",
+    "data_dir": "data",
+    "output_dir": "outputs/revision_mamba_hybrid_grouped"
+  },
+  "parameter_counts": {
+    "mi_mamba": 298740,
+    "ss_head": 36604,
+    "ss_cfc": 125372
+  },
+  "summary": {
+    "mi_mamba": {
+      "accuracy_mean": 56.963734567901234,
+      "accuracy_std": 19.261337994064373,
+      "f1_mean": 0.553863881984515,
+      "f1_std": 0.20205005023587994
+    },
+    "ss_cfc": {
+      "accuracy_mean": 40.39351851851852,
+      "accuracy_std": 13.20814347334044,
+      "f1_mean": 0.385514300760055,
+      "f1_std": 0.14054279129330316
+    },
+    "ss_head": {
+      "accuracy_mean": 47.08719135802469,
+      "accuracy_std": 17.909266852836392,
+      "f1_mean": 0.452954170283888,
+      "f1_std": 0.1880085255498567
+    }
+  },
+  "subject_stability": {},
+  "stat_tests": {
+    "mi_mamba_vs_ss_head": {
+      "t_statistic": 3.2100786662227017,
+      "p_value": 0.012422832198175514,
+      "cohen_d": 1.0700262209149658,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 9.876543209876543,
+      "n_subjects": 9,
+      "holm_p_value": 0.02484566439635103,
+      "wilcoxon_holm_p_value": 0.01171875
+    },
+    "mi_mamba_vs_ss_cfc": {
+      "t_statistic": 4.2673254515615,
+      "p_value": 0.002734077439346768,
+      "cohen_d": 1.4224418159660959,
+      "wilcoxon_statistic": 0.0,
+      "wilcoxon_p_value": 0.00390625,
+      "mean_diff": 16.57021604938272,
+      "n_subjects": 9,
+      "holm_p_value": 0.008202232318040303,
+      "wilcoxon_holm_p_value": 0.01171875
+    },
+    "ss_head_vs_ss_cfc": {
+      "t_statistic": 2.984235542456967,
+      "p_value": 0.017487032607192535,
+      "cohen_d": 0.9947451793407005,
+      "wilcoxon_statistic": 2.5,
+      "wilcoxon_p_value": 0.015625,
+      "mean_diff": 6.693672839506174,
+      "n_subjects": 9,
+      "holm_p_value": 0.02484566439635103,
+      "wilcoxon_holm_p_value": 0.015625
+    }
+  },
+  "group_definition": "session+run"
+}

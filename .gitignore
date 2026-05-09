@@ -39,6 +39,9 @@ outputs/
 # Temporary working files
 tmp/
 temp/
+logs/
+build/
+.claude/
 *.tmp
 tmp_pdf_extract.txt
 

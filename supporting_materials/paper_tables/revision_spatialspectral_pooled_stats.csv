@@ -1,0 +1,2 @@
+comparison,t_statistic,p_value,cohen_d,wilcoxon_statistic,wilcoxon_p_value,mean_diff,n_subjects,holm_p_value,wilcoxon_holm_p_value
+ss_head_vs_ss_cfc,2.847828529237401,0.021550900286398156,0.9492761747501675,3.0,0.01953125,5.420956188572382,9,0.021550900286398156,0.01953125

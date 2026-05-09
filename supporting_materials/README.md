@@ -25,7 +25,9 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 
 - `paper_tables/main_table.csv`
 - `paper_tables/sessionwise_table.csv`
+- `paper_tables/pooled_extended_revision_table.csv`
 - `paper_tables/sessionwise_extended_revision_table.csv`
+- `paper_tables/grouped_extended_revision_table.csv`
 - `paper_tables/revision_mamba_hybrid_sessionwise_table.csv`
 - `paper_tables/grouped_cv_table.csv`
 - `paper_tables/recurrent_control_table.csv`
@@ -34,6 +36,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `paper_tables/perturbation_sweep_summary.csv`
 - `paper_tables/temporal_shuffle_summary.csv`
 - `paper_tables/revision_mamba_pooled_table.csv`
+- `paper_tables/revision_spatialspectral_pooled_table.csv`
+- `paper_tables/revision_mamba_hybrid_grouped_table.csv`
 - `paper_tables/revision_loso_table.csv`
 - `paper_tables/revision_loso_riemann_alignment_summary.csv`
 - `paper_tables/revision_cfc_dt_tau_ablation_summary.csv`
@@ -53,6 +57,10 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `subject_results/sessionwise_subject_scores.csv`
 - `subject_results/sessionwise_extended_revision_metrics.csv`
 - `subject_results/revision_mamba_hybrid_sessionwise_metrics.csv`
+- `subject_results/pooled_extended_revision_subject_scores.csv`
+- `subject_results/grouped_extended_revision_subject_scores.csv`
+- `subject_results/revision_spatialspectral_pooled_subject_scores.csv`
+- `subject_results/revision_mamba_hybrid_grouped_subject_scores.csv`
 - `subject_results/grouped_subject_scores.csv`
 - `subject_results/gru_pooled_subject_scores.csv`
 - `subject_results/gru_sessionwise_subject_scores.csv`
@@ -94,7 +102,7 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 
 ## Notes
 
-- `manuscript/lnn_mi_eeg_paper.tex` is copied from the current working draft `lnn_mi_eeg_paper (2).tex`.
+- `manuscript/lnn_mi_eeg_paper.tex` is copied from the current working draft `lnn_mi_eeg_paper.tex`.
 - The pooled CV uses trial-level stratified folds after pooling both sessions.
 - The grouped pooled control uses `session+run` identifiers in the outer split and now covers all seven main benchmark models to quantify how much the pooled ranking depends on trial shuffling across runs.
 - The session-wise protocol trains on session 1, validates on a split from session 1, and tests on session 2.

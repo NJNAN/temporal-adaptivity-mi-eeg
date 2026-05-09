@@ -23,7 +23,7 @@ This is a scoped claim for standard cue-locked four-class MI decoding. It is not
 │   ├── robustness/                  # Perturbation and temporal-shuffle results
 │   ├── efficiency/                  # Runtime benchmark snapshot
 │   └── reproducibility/             # Seeds, split notes, and exported configs
-├── lnn_mi_eeg_paper (2).tex         # Current manuscript draft
+├── lnn_mi_eeg_paper.tex             # Current manuscript draft
 ├── references.bib                   # Bibliography
 ├── REPRODUCIBILITY.md               # Detailed reproducibility notes
 ├── CODE_TO_PAPER_MAPPING.md         # Mapping from claims/tables to scripts and outputs
@@ -125,6 +125,18 @@ MI-Mamba-style head-to-head under the shared pooled protocol:
 python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
 ```
 
+Spatial-spectral pooled revision controls:
+
+```powershell
+python scripts/run_mi_experiments.py --models ss_head ss_cfc --device cuda --output-dir outputs/revision_spatialspectral_pooled
+```
+
+Grouped-pooled revision controls for MI-Mamba-style and the spatial-spectral controls:
+
+```powershell
+python scripts/run_grouped_pooled_control.py --models mi_mamba ss_head ss_cfc --device cuda --output-dir outputs/revision_mamba_hybrid_grouped
+```
+
 Leave-one-subject-out cross-subject benchmark:
 
 ```powershell
@@ -135,6 +147,7 @@ CfC `Delta t` and `tau` initialization ablation:
 
 ```powershell
 python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
+python scripts/plot_dt_tau_ablation_heatmap.py --summary outputs/revision_cfc_dt_tau_ablation/ablation_summary.csv --output-dir outputs/revision_cfc_dt_tau_ablation
 ```
 
 Channel-wise `tau` sensitivity / topography:
@@ -143,13 +156,19 @@ Channel-wise `tau` sensitivity / topography:
 python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography
 ```
 
+One-command Windows revision rerun:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_all_revision_experiments.ps1
+```
+
 Export paper-ready tables and supporting artifacts:
 
 ```powershell
 python scripts/export_reproducibility_artifacts.py
 ```
 
-The export step copies the curated revision results from `outputs/revision_*` into `outputs/paper_ready/` and `supporting_materials/`, including `revision_mamba_pooled_table.csv`, `revision_loso_table.csv`, `revision_cfc_dt_tau_ablation_summary.csv`, `revision_tau_occlusion_channel_summary.csv`, and `revision_tau_occlusion_topomap_global.pdf`. It also writes `outputs/paper_ready/artifact_manifest.csv` and `supporting_materials/reproducibility/artifact_manifest.csv`.
+The export step copies the curated revision results from `outputs/revision_*` into `outputs/paper_ready/` and `supporting_materials/`, including `revision_mamba_pooled_table.csv`, `revision_spatialspectral_pooled_table.csv`, `revision_mamba_hybrid_grouped_table.csv`, `revision_loso_table.csv`, `revision_cfc_dt_tau_ablation_summary.csv`, `revision_cfc_dt_tau_accuracy_heatmap.pdf`, `revision_tau_occlusion_channel_summary.csv`, and `revision_tau_occlusion_topomap_global.pdf`. It also writes `outputs/paper_ready/artifact_manifest.csv` and `supporting_materials/reproducibility/artifact_manifest.csv`.
 
 After the 2026-05-09 integrity audit, the valid regenerated session-wise source is `outputs/bspc_sessionwise_full_rerun/`. The revision session-wise extension for `MI-Mamba-style`, `SpatialSpectral-Head`, and `SpatialSpectral-CfC` is stored in `outputs/revision_mamba_hybrid_sessionwise/`.
 

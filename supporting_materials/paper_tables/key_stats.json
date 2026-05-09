@@ -4074,6 +4074,95 @@
     },
     "note": "Shared-protocol PyTorch MI-Mamba-style surrogate; not a byte-for-byte reproduction."
   },
+  "revision_spatialspectral_pooled": {
+    "summary": {
+      "ss_cfc": {
+        "accuracy_mean": 42.05397301349325,
+        "accuracy_std": 14.49878670588864,
+        "f1_mean": 0.39771056819612105,
+        "f1_std": 0.15974651139539592
+      },
+      "ss_head": {
+        "accuracy_mean": 47.474929202065624,
+        "accuracy_std": 18.331406704563452,
+        "f1_mean": 0.456074860092843,
+        "f1_std": 0.19400595105014695
+      }
+    },
+    "stat_tests": {
+      "ss_head_vs_ss_cfc": {
+        "t_statistic": 2.847828529237401,
+        "p_value": 0.021550900286398156,
+        "cohen_d": 0.9492761747501675,
+        "wilcoxon_statistic": 3.0,
+        "wilcoxon_p_value": 0.01953125,
+        "mean_diff": 5.420956188572382,
+        "n_subjects": 9,
+        "holm_p_value": 0.021550900286398156,
+        "wilcoxon_holm_p_value": 0.01953125
+      }
+    },
+    "note": "Pooled controls for the spatial-spectral head and spatial-spectral CfC backend."
+  },
+  "revision_mamba_hybrid_grouped": {
+    "summary": {
+      "mi_mamba": {
+        "accuracy_mean": 56.963734567901234,
+        "accuracy_std": 19.261337994064373,
+        "f1_mean": 0.553863881984515,
+        "f1_std": 0.20205005023587994
+      },
+      "ss_cfc": {
+        "accuracy_mean": 40.39351851851852,
+        "accuracy_std": 13.20814347334044,
+        "f1_mean": 0.385514300760055,
+        "f1_std": 0.14054279129330316
+      },
+      "ss_head": {
+        "accuracy_mean": 47.08719135802469,
+        "accuracy_std": 17.909266852836392,
+        "f1_mean": 0.452954170283888,
+        "f1_std": 0.1880085255498567
+      }
+    },
+    "stat_tests": {
+      "mi_mamba_vs_ss_head": {
+        "t_statistic": 3.2100786662227017,
+        "p_value": 0.012422832198175514,
+        "cohen_d": 1.0700262209149658,
+        "wilcoxon_statistic": 0.0,
+        "wilcoxon_p_value": 0.00390625,
+        "mean_diff": 9.876543209876543,
+        "n_subjects": 9,
+        "holm_p_value": 0.02484566439635103,
+        "wilcoxon_holm_p_value": 0.01171875
+      },
+      "mi_mamba_vs_ss_cfc": {
+        "t_statistic": 4.2673254515615,
+        "p_value": 0.002734077439346768,
+        "cohen_d": 1.4224418159660959,
+        "wilcoxon_statistic": 0.0,
+        "wilcoxon_p_value": 0.00390625,
+        "mean_diff": 16.57021604938272,
+        "n_subjects": 9,
+        "holm_p_value": 0.008202232318040303,
+        "wilcoxon_holm_p_value": 0.01171875
+      },
+      "ss_head_vs_ss_cfc": {
+        "t_statistic": 2.984235542456967,
+        "p_value": 0.017487032607192535,
+        "cohen_d": 0.9947451793407005,
+        "wilcoxon_statistic": 2.5,
+        "wilcoxon_p_value": 0.015625,
+        "mean_diff": 6.693672839506174,
+        "n_subjects": 9,
+        "holm_p_value": 0.02484566439635103,
+        "wilcoxon_holm_p_value": 0.015625
+      }
+    },
+    "group_definition": "session+run",
+    "note": "Grouped-pooled revision extension for MI-Mamba-style and spatial-spectral controls."
+  },
   "revision_mamba_hybrid_sessionwise": {
     "summary": {
       "mi_mamba": {

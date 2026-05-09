@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-05-09 16:09:13",
+  "device": "cuda",
+  "config": {
+    "subjects": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "models": [
+      "ss_head",
+      "ss_cfc"
+    ],
+    "num_folds": 5,
+    "epochs": 80,
+    "patience": 20,
+    "min_epochs": 25,
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "val_fraction": 0.15,
+    "seed": 20260318,
+    "cfc_hidden_size": 128,
+    "lstm_hidden_size": 128,
+    "cfc_dt": 1.0,
+    "cfc_tau_init": 1.0,
+    "downsample_factor": 2,
+    "device": "cuda",
+    "data_dir": "data",
+    "output_dir": "outputs/revision_spatialspectral_pooled",
+    "smoke_test": false
+  },
+  "parameter_counts": {
+    "ss_head": 36604,
+    "ss_cfc": 125372
+  },
+  "summary": {
+    "ss_cfc": {
+      "accuracy_mean": 42.05397301349325,
+      "accuracy_std": 14.49878670588864,
+      "f1_mean": 0.39771056819612105,
+      "f1_std": 0.15974651139539592
+    },
+    "ss_head": {
+      "accuracy_mean": 47.474929202065624,
+      "accuracy_std": 18.331406704563452,
+      "f1_mean": 0.456074860092843,
+      "f1_std": 0.19400595105014695
+    }
+  },
+  "subject_stability": {},
+  "noise_summary": {
+    "ss_cfc": {
+      "0": {
+        "mean": 40.85657171414292,
+        "std": 12.730534370285508
+      },
+      "5": {
+        "mean": 41.60819590204898,
+        "std": 13.952706052923899
+      },
+      "10": {
+        "mean": 42.11044477761119,
+        "std": 14.869680536628515
+      }
+    },
+    "ss_head": {
+      "0": {
+        "mean": 42.80926203564884,
+        "std": 14.43557820275906
+      },
+      "5": {
+        "mean": 45.816258537397964,
+        "std": 17.606730275303104
+      },
+      "10": {
+        "mean": 47.26170248209228,
+        "std": 18.49815736103977
+      }
+    }
+  },
+  "noise_stat_tests": {},
+  "stat_tests": {
+    "ss_head_vs_ss_cfc": {
+      "t_statistic": 2.847828529237401,
+      "p_value": 0.021550900286398156,
+      "cohen_d": 0.9492761747501675,
+      "wilcoxon_statistic": 3.0,
+      "wilcoxon_p_value": 0.01953125,
+      "mean_diff": 5.420956188572382,
+      "n_subjects": 9,
+      "holm_p_value": 0.021550900286398156,
+      "wilcoxon_holm_p_value": 0.01953125
+    }
+  },
+  "tau_summary": {},
+  "label_order": [
+    "left_hand",
+    "right_hand",
+    "feet",
+    "tongue"
+  ]
+}

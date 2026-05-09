@@ -5,9 +5,9 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 40604,
-    "forward_ms": 3.4864700000071025,
-    "train_step_ms": 76.07348999999886,
-    "peak_memory_mb": 2635.05078125
+    "forward_ms": 8.645324999815784,
+    "train_step_ms": 19.36825749980926,
+    "peak_memory_mb": 235.5517578125
   },
   {
     "model": "eegnet",
@@ -15,9 +15,19 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 2420,
-    "forward_ms": 2.2888325000167242,
-    "train_step_ms": 8.316119999972216,
-    "peak_memory_mb": 89.64990234375
+    "forward_ms": 1.478204999875743,
+    "train_step_ms": 7.92868249991443,
+    "peak_memory_mb": 89.23193359375
+  },
+  {
+    "model": "mi_mamba",
+    "model_display": "MI-Mamba-style",
+    "device": "cuda",
+    "batch_size": 64,
+    "params": 298740,
+    "forward_ms": 11.621219999869936,
+    "train_step_ms": 81.48853249986132,
+    "peak_memory_mb": 296.4169921875
   },
   {
     "model": "tiny_transformer",
@@ -25,9 +35,9 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 101124,
-    "forward_ms": 19.785042500006966,
-    "train_step_ms": 73.19884749999801,
-    "peak_memory_mb": 282.5537109375
+    "forward_ms": 15.365640000163694,
+    "train_step_ms": 55.592465000154334,
+    "peak_memory_mb": 283.18359375
   },
   {
     "model": "hybrid_cfc",
@@ -35,9 +45,9 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 86964,
-    "forward_ms": 28.835914999990564,
-    "train_step_ms": 87.92945499999405,
-    "peak_memory_mb": 90.93896484375
+    "forward_ms": 11.506472499968368,
+    "train_step_ms": 35.76858999986143,
+    "peak_memory_mb": 90.52099609375
   },
   {
     "model": "cfc",
@@ -45,9 +55,9 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 86788,
-    "forward_ms": 407.0924424999703,
-    "train_step_ms": 735.0914575000388,
-    "peak_memory_mb": 290.2490234375
+    "forward_ms": 178.03348999987065,
+    "train_step_ms": 521.7082974999357,
+    "peak_memory_mb": 278.69287109375
   },
   {
     "model": "lstm",
@@ -55,9 +65,9 @@
     "device": "cuda",
     "batch_size": 64,
     "params": 210948,
-    "forward_ms": 8.181967500013343,
-    "train_step_ms": 19.23476000001756,
-    "peak_memory_mb": 581.2080078125
+    "forward_ms": 7.986895000067307,
+    "train_step_ms": 18.91945500028669,
+    "peak_memory_mb": 582.2080078125
   },
   {
     "model": "shallow_convnet",
@@ -65,9 +75,9 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 40604,
-    "forward_ms": 0.2679733333328234,
-    "train_step_ms": 2.252648333342222,
-    "peak_memory_mb": 61.44970703125
+    "forward_ms": 0.6415200000143765,
+    "train_step_ms": 2.403016666600403,
+    "peak_memory_mb": 22.037109375
   },
   {
     "model": "eegnet",
@@ -75,9 +85,19 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 2420,
-    "forward_ms": 0.6699183333391071,
-    "train_step_ms": 2.70780000000741,
-    "peak_memory_mb": 19.03369140625
+    "forward_ms": 0.6845916667468069,
+    "train_step_ms": 3.300846666631211,
+    "peak_memory_mb": 19.27392578125
+  },
+  {
+    "model": "mi_mamba",
+    "model_display": "MI-Mamba-style",
+    "device": "cuda",
+    "batch_size": 1,
+    "params": 298740,
+    "forward_ms": 11.605025000123229,
+    "train_step_ms": 49.948048333317274,
+    "peak_memory_mb": 25.76953125
   },
   {
     "model": "tiny_transformer",
@@ -85,9 +105,9 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 101124,
-    "forward_ms": 1.0929699999906006,
-    "train_step_ms": 6.089743333359365,
-    "peak_memory_mb": 22.77685546875
+    "forward_ms": 1.1976816667205032,
+    "train_step_ms": 5.832013333323023,
+    "peak_memory_mb": 23.05419921875
   },
   {
     "model": "hybrid_cfc",
@@ -95,9 +115,9 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 86964,
-    "forward_ms": 11.000343333338,
-    "train_step_ms": 36.048661666670036,
-    "peak_memory_mb": 20.23046875
+    "forward_ms": 11.425370000021454,
+    "train_step_ms": 36.48141999995763,
+    "peak_memory_mb": 20.8056640625
   },
   {
     "model": "cfc",
@@ -105,9 +125,9 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 86788,
-    "forward_ms": 155.43060500000743,
-    "train_step_ms": 524.4071783333311,
-    "peak_memory_mb": 23.087890625
+    "forward_ms": 164.77034500009418,
+    "train_step_ms": 518.90955000005,
+    "peak_memory_mb": 23.85546875
   },
   {
     "model": "lstm",
@@ -115,9 +135,9 @@
     "device": "cuda",
     "batch_size": 1,
     "params": 210948,
-    "forward_ms": 3.136421666658862,
-    "train_step_ms": 5.562071666675668,
-    "peak_memory_mb": 29.86328125
+    "forward_ms": 2.919678333273623,
+    "train_step_ms": 5.0690683332504705,
+    "peak_memory_mb": 30.86328125
   },
   {
     "model": "riemann_tslr",
@@ -125,7 +145,7 @@
     "device": "cpu",
     "batch_size": 1,
     "params": 1016,
-    "forward_ms": 0.6864839999980177,
+    "forward_ms": 0.7858639999903971,
     "train_step_ms": NaN,
     "peak_memory_mb": NaN,
     "best_c": 1.0

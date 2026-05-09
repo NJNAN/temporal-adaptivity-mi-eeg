@@ -176,6 +176,8 @@ def main() -> None:
     bnci_aux_dir = repo_root / "outputs" / "bnci2014_004_aux"
     tau_control_dir = repo_root / "outputs" / "bspc_tau_controls"
     revision_mamba_dir = repo_root / "outputs" / "revision_mamba_pooled"
+    revision_spatialspectral_pooled_dir = repo_root / "outputs" / "revision_spatialspectral_pooled"
+    revision_mamba_hybrid_grouped_dir = repo_root / "outputs" / "revision_mamba_hybrid_grouped"
     revision_mamba_hybrid_session_dir = repo_root / "outputs" / "revision_mamba_hybrid_sessionwise"
     revision_loso_dir = repo_root / "outputs" / "revision_loso"
     revision_loso_alignment_dir = repo_root / "outputs" / "revision_loso_riemann_alignment"
@@ -216,11 +218,26 @@ def main() -> None:
     grouped_table_order = [
         "Riemann-TSLR",
         "Shallow ConvNet",
+        "MI-Mamba-style",
         "EEGNet",
         "Hybrid-CfC-style",
         "Tiny-Transformer",
         "CfC-style",
+        "SpatialSpectral-Head",
         "LSTM",
+        "SpatialSpectral-CfC",
+    ]
+    pooled_revision_table_order = [
+        "Shallow ConvNet",
+        "Riemann-TSLR",
+        "MI-Mamba-style",
+        "EEGNet",
+        "Hybrid-CfC-style",
+        "Tiny-Transformer",
+        "CfC-style",
+        "SpatialSpectral-Head",
+        "LSTM",
+        "SpatialSpectral-CfC",
     ]
 
     main_table = build_summary_table(
@@ -479,6 +496,111 @@ def main() -> None:
         copy_if_exists(revision_mamba_dir / "confusion_matrices.csv", paper_dir / "revision_mamba_pooled_confusion_matrices.csv")
         copy_if_exists(revision_mamba_dir / "confusion_matrices.pdf", paper_dir / "revision_mamba_pooled_confusion_matrices.pdf")
 
+    revision_spatialspectral_pooled_results = export_revision_summary_table(
+        revision_spatialspectral_pooled_dir / "results_summary.json",
+        paper_dir / "revision_spatialspectral_pooled_table.csv",
+        core.get_model_display_name,
+        ["SpatialSpectral-Head", "SpatialSpectral-CfC"],
+    )
+    if revision_spatialspectral_pooled_results is not None:
+        key_stats["revision_spatialspectral_pooled"] = {
+            "summary": revision_spatialspectral_pooled_results["summary"],
+            "stat_tests": revision_spatialspectral_pooled_results.get("stat_tests", {}),
+            "note": "Pooled controls for the spatial-spectral head and spatial-spectral CfC backend.",
+        }
+        copy_if_exists(
+            revision_spatialspectral_pooled_dir / "subject_summary.csv",
+            paper_dir / "revision_spatialspectral_pooled_subject_scores.csv",
+        )
+        copy_if_exists(
+            revision_spatialspectral_pooled_dir / "stat_tests.csv",
+            paper_dir / "revision_spatialspectral_pooled_stats.csv",
+        )
+        copy_if_exists(
+            revision_spatialspectral_pooled_dir / "results_summary.json",
+            paper_dir / "revision_spatialspectral_pooled_results_summary.json",
+        )
+
+    if (
+        (paper_dir / "revision_mamba_pooled_table.csv").exists()
+        and (paper_dir / "revision_spatialspectral_pooled_table.csv").exists()
+    ):
+        pooled_revision_table = pd.concat(
+            [
+                pd.read_csv(paper_dir / "revision_mamba_pooled_table.csv"),
+                pd.read_csv(paper_dir / "revision_spatialspectral_pooled_table.csv"),
+            ],
+            ignore_index=True,
+        )
+        pooled_revision_table["sort_key"] = pooled_revision_table["model_display"].map(
+            {name: index for index, name in enumerate(pooled_revision_table_order)}
+        ).fillna(999)
+        pooled_revision_table = pooled_revision_table.sort_values(["sort_key", "model_display"]).drop(columns=["sort_key"])
+        pooled_revision_table.to_csv(paper_dir / "pooled_extended_revision_table.csv", index=False)
+        pooled_revision_metrics = []
+        for path in [
+            revision_mamba_dir / "subject_summary.csv",
+            revision_spatialspectral_pooled_dir / "subject_summary.csv",
+        ]:
+            if path.exists():
+                pooled_revision_metrics.append(pd.read_csv(path))
+        if pooled_revision_metrics:
+            pd.concat(pooled_revision_metrics, ignore_index=True).to_csv(
+                paper_dir / "pooled_extended_revision_subject_scores.csv",
+                index=False,
+            )
+
+    revision_mamba_grouped_results = export_revision_summary_table(
+        revision_mamba_hybrid_grouped_dir / "results_summary.json",
+        paper_dir / "revision_mamba_hybrid_grouped_table.csv",
+        core.get_model_display_name,
+        ["MI-Mamba-style", "SpatialSpectral-Head", "SpatialSpectral-CfC"],
+    )
+    if revision_mamba_grouped_results is not None:
+        key_stats["revision_mamba_hybrid_grouped"] = {
+            "summary": revision_mamba_grouped_results["summary"],
+            "stat_tests": revision_mamba_grouped_results.get("stat_tests", {}),
+            "group_definition": revision_mamba_grouped_results.get("group_definition", ""),
+            "note": "Grouped-pooled revision extension for MI-Mamba-style and spatial-spectral controls.",
+        }
+        copy_if_exists(
+            revision_mamba_hybrid_grouped_dir / "subject_summary.csv",
+            paper_dir / "revision_mamba_hybrid_grouped_subject_scores.csv",
+        )
+        copy_if_exists(
+            revision_mamba_hybrid_grouped_dir / "stat_tests.csv",
+            paper_dir / "revision_mamba_hybrid_grouped_stats.csv",
+        )
+        copy_if_exists(
+            revision_mamba_hybrid_grouped_dir / "results_summary.json",
+            paper_dir / "revision_mamba_hybrid_grouped_results_summary.json",
+        )
+        if (paper_dir / "grouped_cv_table.csv").exists():
+            grouped_revision_table = pd.concat(
+                [
+                    pd.read_csv(paper_dir / "grouped_cv_table.csv"),
+                    pd.read_csv(paper_dir / "revision_mamba_hybrid_grouped_table.csv"),
+                ],
+                ignore_index=True,
+            )
+            grouped_revision_table["sort_key"] = grouped_revision_table["model_display"].map(
+                {name: index for index, name in enumerate(grouped_table_order)}
+            ).fillna(999)
+            grouped_revision_table = grouped_revision_table.sort_values(["sort_key", "model_display"]).drop(columns=["sort_key"])
+            grouped_revision_table.to_csv(paper_dir / "grouped_extended_revision_table.csv", index=False)
+        grouped_revision_metrics = []
+        for path in [
+            grouped_dir / "subject_summary.csv",
+            revision_mamba_hybrid_grouped_dir / "subject_summary.csv",
+        ]:
+            if path.exists():
+                grouped_revision_metrics.append(pd.read_csv(path))
+        if grouped_revision_metrics:
+            pd.concat(grouped_revision_metrics, ignore_index=True).to_csv(
+                paper_dir / "grouped_extended_revision_subject_scores.csv",
+                index=False,
+            )
+
     revision_mamba_session_results = export_revision_summary_table(
         revision_mamba_hybrid_session_dir / "sessionwise_results_summary.json",
         paper_dir / "revision_mamba_hybrid_sessionwise_table.csv",
@@ -566,6 +688,8 @@ def main() -> None:
 
     if (revision_ablation_dir / "ablation_summary.csv").exists():
         copy_if_exists(revision_ablation_dir / "ablation_summary.csv", paper_dir / "revision_cfc_dt_tau_ablation_summary.csv")
+        copy_if_exists(revision_ablation_dir / "dt_tau_accuracy_heatmap.pdf", paper_dir / "revision_cfc_dt_tau_accuracy_heatmap.pdf")
+        copy_if_exists(revision_ablation_dir / "dt_tau_f1_heatmap.pdf", paper_dir / "revision_cfc_dt_tau_f1_heatmap.pdf")
         key_stats["revision_cfc_dt_tau_ablation"] = {
             "summary_csv": "revision_cfc_dt_tau_ablation_summary.csv",
             "note": "This table reflects the completed rows present when export_reproducibility_artifacts.py was run.",
@@ -704,12 +828,18 @@ def main() -> None:
         "paper_tables": [
             (paper_dir / "main_table.csv", "main_table.csv"),
             (paper_dir / "sessionwise_table.csv", "sessionwise_table.csv"),
+            (paper_dir / "pooled_extended_revision_table.csv", "pooled_extended_revision_table.csv"),
             (paper_dir / "sessionwise_extended_revision_table.csv", "sessionwise_extended_revision_table.csv"),
             (paper_dir / "grouped_cv_table.csv", "grouped_cv_table.csv"),
+            (paper_dir / "grouped_extended_revision_table.csv", "grouped_extended_revision_table.csv"),
             (paper_dir / "recurrent_control_table.csv", "recurrent_control_table.csv"),
             (paper_dir / "perturbation_sweep_summary.csv", "perturbation_sweep_summary.csv"),
             (paper_dir / "temporal_shuffle_summary.csv", "temporal_shuffle_summary.csv"),
             (paper_dir / "revision_mamba_pooled_table.csv", "revision_mamba_pooled_table.csv"),
+            (paper_dir / "revision_spatialspectral_pooled_table.csv", "revision_spatialspectral_pooled_table.csv"),
+            (paper_dir / "revision_spatialspectral_pooled_stats.csv", "revision_spatialspectral_pooled_stats.csv"),
+            (paper_dir / "revision_mamba_hybrid_grouped_table.csv", "revision_mamba_hybrid_grouped_table.csv"),
+            (paper_dir / "revision_mamba_hybrid_grouped_stats.csv", "revision_mamba_hybrid_grouped_stats.csv"),
             (paper_dir / "revision_mamba_hybrid_sessionwise_table.csv", "revision_mamba_hybrid_sessionwise_table.csv"),
             (paper_dir / "revision_loso_table.csv", "revision_loso_table.csv"),
             (paper_dir / "revision_loso_riemann_alignment_summary.csv", "revision_loso_riemann_alignment_summary.csv"),
@@ -734,6 +864,10 @@ def main() -> None:
             (paper_dir / "sessionwise_extended_revision_metrics.csv", "sessionwise_extended_revision_metrics.csv"),
             (paper_dir / "grouped_subject_scores.csv", "grouped_subject_scores.csv"),
             (paper_dir / "revision_mamba_pooled_subject_scores.csv", "revision_mamba_pooled_subject_scores.csv"),
+            (paper_dir / "revision_spatialspectral_pooled_subject_scores.csv", "revision_spatialspectral_pooled_subject_scores.csv"),
+            (paper_dir / "pooled_extended_revision_subject_scores.csv", "pooled_extended_revision_subject_scores.csv"),
+            (paper_dir / "revision_mamba_hybrid_grouped_subject_scores.csv", "revision_mamba_hybrid_grouped_subject_scores.csv"),
+            (paper_dir / "grouped_extended_revision_subject_scores.csv", "grouped_extended_revision_subject_scores.csv"),
             (paper_dir / "revision_mamba_hybrid_sessionwise_metrics.csv", "revision_mamba_hybrid_sessionwise_metrics.csv"),
             (paper_dir / "revision_loso_metrics.csv", "revision_loso_metrics.csv"),
             (paper_dir / "revision_loso_assignments.csv", "revision_loso_assignments.csv"),
@@ -792,6 +926,8 @@ def main() -> None:
             (paper_dir / "revision_tau_occlusion_channel_summary.csv", "revision_tau_occlusion_channel_summary.csv"),
             (paper_dir / "revision_tau_occlusion_channel_subject.csv", "revision_tau_occlusion_channel_subject.csv"),
             (paper_dir / "revision_tau_occlusion_topomap_global.pdf", "revision_tau_occlusion_topomap_global.pdf"),
+            (paper_dir / "revision_cfc_dt_tau_accuracy_heatmap.pdf", "revision_cfc_dt_tau_accuracy_heatmap.pdf"),
+            (paper_dir / "revision_cfc_dt_tau_f1_heatmap.pdf", "revision_cfc_dt_tau_f1_heatmap.pdf"),
         ],
         "robustness": [
             (session_dir / "structured_perturbation_metrics.csv", "structured_perturbation_metrics.csv"),
@@ -821,6 +957,14 @@ def main() -> None:
                 paper_dir / "revision_mamba_hybrid_sessionwise_results_summary.json",
                 "revision_mamba_hybrid_sessionwise_results_summary.json",
             ),
+            (
+                paper_dir / "revision_spatialspectral_pooled_results_summary.json",
+                "revision_spatialspectral_pooled_results_summary.json",
+            ),
+            (
+                paper_dir / "revision_mamba_hybrid_grouped_results_summary.json",
+                "revision_mamba_hybrid_grouped_results_summary.json",
+            ),
             (paper_dir / "bnci2014_004_results_summary.json", "bnci2014_004_results_summary.json"),
             (repo_root / "REPRODUCIBILITY.md", "REPRODUCIBILITY.md"),
         ],
@@ -836,12 +980,14 @@ def main() -> None:
             (repo_root / "scripts" / "repair_mamba_pooled_summary.py", "repair_mamba_pooled_summary.py"),
             (repo_root / "scripts" / "run_cfc_dt_tau_ablation.py", "run_cfc_dt_tau_ablation.py"),
             (repo_root / "scripts" / "run_tau_topography.py", "run_tau_topography.py"),
+            (repo_root / "scripts" / "plot_dt_tau_ablation_heatmap.py", "plot_dt_tau_ablation_heatmap.py"),
             (repo_root / "scripts" / "check_environment.py", "check_environment.py"),
             (repo_root / "scripts" / "benchmark_model_efficiency.py", "benchmark_model_efficiency.py"),
             (repo_root / "scripts" / "export_reproducibility_artifacts.py", "export_reproducibility_artifacts.py"),
+            (repo_root / "scripts" / "run_all_revision_experiments.ps1", "run_all_revision_experiments.ps1"),
         ],
         "manuscript": [
-            (repo_root / "lnn_mi_eeg_paper (2).tex", "lnn_mi_eeg_paper.tex"),
+            (repo_root / "lnn_mi_eeg_paper.tex", "lnn_mi_eeg_paper.tex"),
             (repo_root / "references.bib", "references.bib"),
         ],
     }

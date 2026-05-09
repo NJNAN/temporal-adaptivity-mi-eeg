@@ -312,7 +312,7 @@ Temporal adaptivity is useful but not sufficient. In standard cue-locked four-cl
 2. 修 `run_loso_cross_subject.py`：
    - 增加 `heldout_subject` 别名列。
    - 增加真正的断点续跑读取逻辑。
-3. 更新 `lnn_mi_eeg_paper (2).tex`：
+3. 更新 `lnn_mi_eeg_paper.tex`：
    - pooled 表。
    - LOSO 表。
    - tau topography 图。

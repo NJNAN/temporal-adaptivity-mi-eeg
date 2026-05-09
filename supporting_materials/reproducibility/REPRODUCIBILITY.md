@@ -136,10 +136,19 @@ python scripts/benchmark_model_efficiency.py
 python scripts/export_reproducibility_artifacts.py
 python scripts/check_environment.py --output outputs/paper_ready/environment_check.json
 python scripts/run_mi_experiments.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_mamba_pooled
+python scripts/run_mi_experiments.py --models ss_head ss_cfc --device cuda --output-dir outputs/revision_spatialspectral_pooled
+python scripts/run_grouped_pooled_control.py --models mi_mamba ss_head ss_cfc --device cuda --output-dir outputs/revision_mamba_hybrid_grouped
 python scripts/run_sessionwise_mi_comparison.py --models mi_mamba ss_cfc ss_head --device cuda --output-dir outputs/revision_mamba_hybrid_sessionwise
 python scripts/run_loso_cross_subject.py --models shallow_convnet riemann_tslr eegnet mi_mamba tiny_transformer cfc lstm --device cuda --output-dir outputs/revision_loso
 python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc ss_cfc --dt-values 0.5 1.0 2.0 --tau-init-values 0.5 1.0 2.0 --device cuda --output-dir outputs/revision_cfc_dt_tau_ablation
+python scripts/plot_dt_tau_ablation_heatmap.py --summary outputs/revision_cfc_dt_tau_ablation/ablation_summary.csv --output-dir outputs/revision_cfc_dt_tau_ablation
 python scripts/run_tau_topography.py --device cuda --output-dir outputs/revision_tau_topography
+```
+
+For a single scripted Windows rerun of the revision package:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_all_revision_experiments.ps1
 ```
 
 ## Local CUDA environment used for the revision run

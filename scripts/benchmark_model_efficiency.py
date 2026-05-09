@@ -172,7 +172,7 @@ def main() -> None:
     n_channels = x_train.shape[1]
     n_samples = x_train.shape[2]
 
-    models = ["shallow_convnet", "eegnet", "tiny_transformer", "hybrid_cfc", "cfc", "lstm"]
+    models = ["shallow_convnet", "eegnet", "mi_mamba", "tiny_transformer", "hybrid_cfc", "cfc", "lstm"]
     rows = []
     for batch_size in (64, 1):
         for model_name in models:

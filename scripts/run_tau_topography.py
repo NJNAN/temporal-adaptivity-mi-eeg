@@ -83,8 +83,10 @@ def save_topomap(summary_df: pd.DataFrame, output_dir: Path) -> str:
         info = mne.create_info(BCI_IV_2A_CHANNELS, sfreq=125.0, ch_types="eeg")
         montage = mne.channels.make_standard_montage("standard_1020")
         info.set_montage(montage, on_missing="ignore")
-        fig, axis = plt.subplots(figsize=(6, 5))
-        mne.viz.plot_topomap(values, info, axes=axis, show=False, names=BCI_IV_2A_CHANNELS)
+        fig, axis = plt.subplots(figsize=(6.4, 5))
+        image, _ = mne.viz.plot_topomap(values, info, axes=axis, show=False, names=BCI_IV_2A_CHANNELS)
+        cbar = fig.colorbar(image, ax=axis, shrink=0.72, pad=0.06)
+        cbar.set_label("Mean |Delta tau|")
         axis.set_title("Channel-wise Tau Sensitivity")
     except Exception:
         fig, axis = plt.subplots(figsize=(9, 4))

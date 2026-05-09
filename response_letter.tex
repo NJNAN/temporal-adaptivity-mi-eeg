@@ -39,7 +39,7 @@
 
 \begin{center}
 {\Large Response to the Reviewers}\\[0.5em]
-{\large Manuscript: \emph{On the Limits of Temporal Adaptivity in MI-EEG Decoding}}\\[0.25em]
+{\large Manuscript: \emph{Temporal Adaptivity Is Not Enough: Protocol-Dependent Inductive Biases in MI-EEG Decoding}}\\[0.25em]
 Junlin Huang
 \end{center}
 
@@ -87,7 +87,7 @@ The manuscript mentions Mamba and ODE/CDE models but fails to include them in th
 \begin{response}
 We added a shared-protocol \textbf{MI-Mamba-style} selective-SSM baseline. It uses the same preprocessing, train-only normalization, validation, early stopping, and statistical testing as the other models. We describe it as a shared-protocol surrogate rather than a byte-for-byte reproduction of the original MI-Mamba implementation.
 
-In pooled evaluation, MI-Mamba-style reaches 59.0\% accuracy and 0.575 macro F1, improving the temporal-model tier but remaining below Shallow ConvNet (68.8\%) and Riemann-TSLR (68.3\%). In session-wise evaluation, it reaches 48.4\% accuracy and 0.447 macro F1, again below Riemann-TSLR (62.8\%) and Shallow ConvNet (59.5\%). In the grouped-pooled revision extension, it reaches 57.0\% accuracy and 0.554 macro F1, leading the revision-only grouped extension but remaining below the original grouped leaders Riemann-TSLR (67.8\%) and Shallow ConvNet (66.2\%). The conclusion has therefore been refined: modern SSMs improve the temporal tier, but the observed ceiling remains set by spatial/geometric priors in this protocol.
+In pooled evaluation, MI-Mamba-style reaches 59.0\% accuracy and 0.575 macro F1, improving the temporal-model tier but remaining below Shallow ConvNet (68.8\%) and Riemann-TSLR (68.3\%). In session-wise evaluation, it reaches 48.4\% accuracy and 0.447 macro F1, again below Riemann-TSLR (62.8\%) and Shallow ConvNet (59.5\%). In the grouped-pooled revision extension, it reaches 57.0\% accuracy and 0.554 macro F1, leading the revision-only grouped extension but remaining below the original grouped leaders Riemann-TSLR (67.8\%) and Shallow ConvNet (66.2\%). The conclusion has therefore been refined: modern SSMs improve the temporal tier, but these protocols are better explained by spatial-spectral and geometric inductive biases than by temporal adaptivity alone.
 \end{response}
 
 \begin{reviewercomment}
@@ -95,7 +95,7 @@ All results are reported under within-subject settings. The authors should inclu
 \end{reviewercomment}
 
 \begin{response}
-We added a leave-one-subject-out (LOSO) experiment. In each fold, one subject is held out for testing, normalization statistics are estimated only from training subjects, and validation is selected from the training subjects. In unaligned LOSO, EEGNet leads at 45.1\%, followed by Shallow ConvNet at 41.4\%, CfC-style at 39.8\%, LSTM at 39.2\%, MI-Mamba-style at 38.6\%, Tiny-Transformer at 38.0\%, and Riemann-TSLR at 34.2\%. Because Riemann-TSLR was unexpectedly low, we added an unsupervised Euclidean-alignment diagnostic; Riemann-TSLR rises from 34.2\% to 47.9\% with alignment (paired $p=0.001$). We therefore interpret LOSO as a subject-shift and alignment stress test, not as evidence for a temporal-model advantage.
+We added a leave-one-subject-out (LOSO) experiment. In each fold, one subject is held out for testing, normalization statistics are estimated only from training subjects, and validation is selected from the training subjects. In unaligned LOSO, EEGNet leads at 45.1\%, followed by Shallow ConvNet at 41.4\%, CfC-style at 39.8\%, LSTM at 39.2\%, MI-Mamba-style at 38.6\%, Tiny-Transformer at 38.0\%, and Riemann-TSLR at 34.2\%. Because Riemann-TSLR was unexpectedly low, we added an unsupervised Euclidean-alignment diagnostic; Riemann-TSLR rises from 34.2\% to 47.9\% with alignment (paired $p=0.001$). We now state explicitly that the Euclidean-alignment result is a diagnostic for subject-shift sensitivity rather than the primary LOSO comparison, and we interpret LOSO as a subject-shift and alignment stress test, not as evidence for a temporal-model advantage.
 \end{response}
 
 \begin{reviewercomment}

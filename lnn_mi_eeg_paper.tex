@@ -129,75 +129,26 @@ CfC-style exposes explicit, sample-wise time constants. If temporal adaptivity i
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.74\linewidth]{supporting_materials/tau_analysis/tau_dist_placeholder.pdf}
-  \caption{Trial-averaged $\tau$ distributions from the session-wise CfC-style evaluation.}
-  \label{fig:tau}
-\end{figure}
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.86\linewidth]{supporting_materials/tau_analysis/revision_tau_occlusion_topomap_global.pdf}
+  \includegraphics[width=0.78\linewidth]{supporting_materials/tau_analysis/revision_tau_occlusion_topomap_global.pdf}
   \caption{Channel-wise sensitivity of learned hidden-state $\tau$ values. The map is based on input-channel occlusion and should not be interpreted as electrode-specific learned time constants.}
   \label{fig:tau_topography}
 \end{figure}
 
-Figure \ref{fig:tau} indicates broad overlap in the class-wise $\tau$ distributions. The regenerated full session-wise run gives class means of 1.565 (left hand), 1.574 (right hand), 1.631 (feet), and 1.616 (tongue). The overall Friedman test on subject-class summaries is not significant ($p = 0.706$), and no paired contrast approaches a stable class split (all raw $p \ge 0.152$). Thus the first link in the evidence chain still does not support reliable class separation by learned time scale.
+The regenerated full session-wise run gives class-mean $\tau$ values of 1.565 (left hand), 1.574 (right hand), 1.631 (feet), and 1.616 (tongue). The overall Friedman test on subject-class summaries is not significant ($p = 0.706$), and no paired contrast approaches a stable class split (all raw $p \ge 0.152$). Thus the first link in the evidence chain still does not support reliable class separation by learned time scale.
 
 The spectral associations are more nuanced after regeneration. $\tau$ correlates strongly with $\mu$-band power ($r = 0.792$, $p = 8.95 \times 10^{-9}$), but not with $\beta$-band power ($r = 0.108$, $p = 0.529$). We therefore no longer interpret $\tau$ as spectrally inert. Rather, it appears to track part of the sensorimotor $\mu$-band state while still failing to form a stable class biomarker. Time-resolved $\tau$ trajectories peak between 2.45 s and 3.13 s across classes, and early-window means (2.0--2.5 s) cluster tightly between 1.61 and 1.62. Figure \ref{fig:tau_topography} further shows that motor-adjacent channels can influence $\tau$, but this influence does not translate into consistent class discrimination. The corresponding channel table is included in the supporting materials as \texttt{revision\_tau\_occlusion\_channel\_summary.csv}. The central implication is therefore refined rather than reversed: the learned time scale is physiologically modulated, yet it is not by itself a reliable source of class-discriminative information in this setting.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{supporting_materials/tau_analysis/revision_cfc_dt_tau_accuracy_heatmap.pdf}
-  \caption{Session-wise $\Delta t$/$\tau$-initialization ablation. The best pure CfC-style setting essentially matches the regenerated default, while Hybrid-CfC-style remains below the session-wise spatial/geometric leaders.}
-  \label{fig:dt_tau_ablation}
-\end{figure}
-
-The completed $\Delta t$/$\tau$-initialization ablation further rules out a trivial memory-scale explanation for the pure CfC-style result (Fig. \ref{fig:dt_tau_ablation}). Across $\Delta t \in \{0.5,1.0,2.0\}$ and $\tau_{\mathrm{init}}\in\{0.5,1.0,2.0\}$, the best pure CfC-style setting reaches 45.6\% accuracy at $\Delta t=2.0,\tau_{\mathrm{init}}=0.5$, essentially matching the regenerated default session-wise CfC-style result (45.1\%). Hybrid-CfC-style is more sensitive, with a best ablation result of 52.2\% at $\Delta t=0.5,\tau_{\mathrm{init}}=2.0$, but this remains below the Shallow ConvNet and Riemann-TSLR session-wise leaders. SpatialSpectral-CfC peaks at only 39.1\%. Thus poor default $\Delta t$ or $\tau$ initialization is not sufficient to explain the overall temporal-model gap.
-
-\subsection{Structured Perturbations}
-To move beyond iid Gaussian perturbations, we evaluate two structured distortions on the session-wise models: 8--30 Hz band-limited noise at 5 dB and random dropout of 30\% of channels. For band-limited noise, white noise is filtered to 8--30 Hz and scaled trial-wise on the pre-standardization band-passed test trials according to $\mathrm{noise\ power} = \mathrm{signal\ power}/10^{\mathrm{SNR}/10}$, after which the perturbed trials are standardized with the same training-only statistics as the clean condition. Both perturbations are repeated with five random seeds per subject and model.
-
-\begin{table}[t]
-  \centering
-  \footnotesize
-  \caption{Session-wise accuracy ($\%$) under structured perturbations.}
-  \begin{tabular}{lcc}
-    \toprule
-    \textbf{Model} & \textbf{Band-limited 5 dB} & \textbf{Channel Dropout 30\%} \\
-    \midrule
-    Shallow ConvNet & 43.9 $\pm$ 17.3 & 40.0 $\pm$ 9.3 \\
-    Riemann-TSLR & 26.3 $\pm$ 3.3 & 27.5 $\pm$ 2.2 \\
-    EEGNet & 31.7 $\pm$ 8.5 & 36.5 $\pm$ 9.5 \\
-    Tiny-Transformer & 34.0 $\pm$ 10.2 & 32.8 $\pm$ 5.2 \\
-    CfC-style & 37.7 $\pm$ 11.0 & 34.5 $\pm$ 6.6 \\
-    Hybrid-CfC-style & 28.9 $\pm$ 4.4 & 34.2 $\pm$ 8.8 \\
-    LSTM & 38.4 $\pm$ 9.8 & 30.3 $\pm$ 3.4 \\
-    \bottomrule
-  \end{tabular}
-  \label{tab:noise}
-\end{table}
-
-The models exhibit distinct structured-perturbation profiles, but the differences are less decisive than in the clean-condition benchmark once Holm correction is applied. Shallow ConvNet remains the strongest neural model under channel dropout, while LSTM and CfC-style are numerically competitive under severe 5 dB band-limited noise. Riemann-TSLR degrades sharply under both perturbations, consistent with covariance geometry being sensitive to distributional distortion when no alignment or artifact-specific correction is applied. None of the main pairwise perturbation differences remain significant after Holm correction. A supplementary sweep over SNR $\in \{20,10,5,0\}$ dB and dropout $\in \{10\%,30\%,50\%\}$ shows no single robustness winner: Shallow ConvNet remains strongest from clean through 10 dB and across all tested dropout levels, while the ranking compresses at 5 dB and sequence models cluster near or above other baselines at 0 dB. This is a controlled perturbation study rather than a realistic artifact simulation.
+The completed $\Delta t$/$\tau$-initialization ablation further rules out a trivial memory-scale explanation for the pure CfC-style result. Across $\Delta t \in \{0.5,1.0,2.0\}$ and $\tau_{\mathrm{init}}\in\{0.5,1.0,2.0\}$, the best pure CfC-style setting reaches 45.6\% accuracy at $\Delta t=2.0,\tau_{\mathrm{init}}=0.5$, essentially matching the regenerated default session-wise CfC-style result (45.1\%). Hybrid-CfC-style is more sensitive, reaching 52.2\% at $\Delta t=0.5,\tau_{\mathrm{init}}=2.0$, but this remains below the Shallow ConvNet and Riemann-TSLR session-wise leaders. SpatialSpectral-CfC peaks at 39.1\%. Thus poor default $\Delta t$ or $\tau$ initialization is not sufficient to explain the overall temporal-model gap; the full heatmap is provided in the supporting materials.
 
 \section{Conclusion}
 
-Our results suggest that temporal adaptivity alone is insufficient to determine the performance ceiling in MI-EEG decoding, with performance more strongly influenced by spatial, spectral, and geometric priors. Across pooled and session-wise protocols, the top accuracy is delivered by Shallow ConvNet and Riemann-TSLR; the grouped pooled control preserves the same top tier for the original seven-model set. The added MI-Mamba-style selective-SSM baseline improves the temporal-model tier and leads the revision-only grouped extension, but it remains below the spatial/geometric leaders in pooled and session-wise evaluation. The SpatialSpectral controls further show no consistent synergy from appending the current CfC backend to a spatial--spectral frontend: SpatialSpectral-CfC is below SpatialSpectral-Head in pooled, grouped, and session-wise evaluation. In unaligned LOSO, EEGNet leads and Riemann-TSLR suffers until Euclidean alignment is applied, showing that this protocol is dominated by subject-shift and alignment effects rather than by temporal adaptivity. Under the stricter session-wise protocol, $\tau$ behaves as a physiologically modulated temporal-scale indicator, including a regenerated association with $\mu$-band power, but not as a robust class biomarker. A supporting binary-MI check on BNCI2014-004 again leaves Shallow ConvNet strongest (80.1\%) and EEGNet second (78.3\%), and does not alter the main boundary claim.
+Across pooled and session-wise protocols, Shallow ConvNet and Riemann-TSLR remain the strongest models; the grouped-pooled control preserves the same top tier for the original model set. MI-Mamba-style improves the temporal-model tier and leads the revision-only grouped extension, but remains below the spatial/geometric leaders in pooled and session-wise evaluation. The SpatialSpectral controls also show no consistent gain from appending the present CfC-style backend to a spatial--spectral frontend. In LOSO, EEGNet leads before alignment and Riemann-TSLR recovers after Euclidean alignment, indicating that subject shift can dominate this protocol. The learned $\tau$ values are physiologically modulated, including a regenerated $\mu$-band association, but they do not form a stable class biomarker, and the completed $\Delta t$/$\tau$-initialization ablation does not rescue pure CfC-style decoding. We therefore do not claim that temporal modeling is unimportant across EEG; asynchronous MI, continuous control, and paradigms where onset timing is a target variable may depend more heavily on adaptive dynamics. Within standard cue-locked four-class IV-2a decoding, however, the evidence points to spatial--spectral and geometric inductive bias, rather than temporal adaptivity alone, as the stronger determinant of performance. Reproducibility scripts, split files, paper-ready tables, tau topography artifacts, and the artifact manifest are released with the supporting materials.
 
-A practical efficiency snapshot sharpens this tradeoff. On an RTX 4060 laptop GPU with batch size 64 and 22$\times$500 inputs, representative forward times are 1.5 ms for EEGNet, 8.0 ms for LSTM, 8.6 ms for Shallow ConvNet, 11.5 ms for Hybrid-CfC-style, 11.6 ms for MI-Mamba-style, 15.4 ms for Tiny-Transformer, and 178.0 ms for pure CfC-style; at batch size 1 the approximate per-trial latencies are 0.64 ms for Shallow ConvNet, 0.68 ms for EEGNet, 1.20 ms for Tiny-Transformer, 2.92 ms for LSTM, 11.43 ms for Hybrid-CfC-style, 11.61 ms for MI-Mamba-style, and 164.77 ms for pure CfC-style, while Riemann-TSLR requires 0.79 ms on CPU inference. These eager-mode FP32 measurements are implementation-specific snapshots, and the high CfC-style cost is dominated by the explicit per-time-step Python loop and repeated candidate/$\tau$ MLP evaluations. We did not benchmark vectorized scan, JIT, or \texttt{torch.compile} variants here, so the reported latency should be read as the cost of the present implementation rather than a lower bound for all CfC-style recurrences.
-
-Several limitations remain. Parameter efficiency is not matched across families, $\Delta t=1.0$ means $\tau$ should be interpreted as a relative rather than physiological timescale, and the baseline set still does not include ODE/CDE models, stronger CNN/transformer hybrids such as DBConformer, or graph/deeper geometry-aware models such as Graph-CSPNet and GAH-TNet \cite{gu2023mamba,wang2025eegmamba,guo2025mimamba,wang2025dbconformer,ingolfsson2020eegtcnet,elouahidi2024simpleconv,li2024ctnet,han2024eegcct,ju2022graphcspnet,han2025gahtnet}. The revision controls now include a shared-protocol MI-Mamba-style selective-SSM surrogate, leave-one-subject-out evaluation with a Riemannian alignment diagnostic, a completed $\Delta t$/$\tau$-initialization ablation, channel-wise $\tau$ sensitivity analysis, and a stronger spatial--spectral CfC hybrid ablation.
-
-The Hybrid-CfC-style frontend is deliberately minimal and diagnostic, and the stronger SpatialSpectral-CfC control still remains weak, so these results should not be interpreted as evidence against all spatial-continuous hybrids. We also omit cropped training, stronger shallow stems, and aggressive augmentation; these choices keep the comparison controlled, but they also mean recent within-subject reports using such enhancements can legitimately achieve higher absolute CNN accuracies than the compact reference baselines reported here \cite{ingolfsson2020eegtcnet,elouahidi2024simpleconv,li2024ctnet,han2024eegcct}. Although LOSO is now included, it remains a compact diagnostic rather than a full cross-dataset transfer study, and richer $\tau$ analyses remain open problems. We do not claim that temporal modeling is universally unimportant across EEG, only that its role is secondary in this specific standard cue-locked four-class MI setting. In asynchronous MI, continuous control, or paradigms where onset timing and state transitions are part of the target variable, temporal adaptivity may be more central than it is here. A plausible task-level reason is that standard IV-2a discrimination is anchored more strongly in spatially localized sensorimotor patterns and band-limited ERD/ERS structure, while temporal dynamics act mainly as modulation rather than the primary discriminative substrate, consistent with MOABB-scale evidence that covariance-based priors remain unusually strong across EEG benchmarks \cite{chevallier2024moabb}. Overall, within standard cue-locked four-class MI-EEG settings, this task does not appear to be fundamentally bottlenecked by temporal-scale modeling, but more strongly by spatial and spectral structure.
-
-\section*{Reproducibility and Code Availability}
-
-All neural models are implemented in PyTorch and the Riemannian baseline uses pyRiemann and scikit-learn. The released repository includes the main pooled, grouped-pooled, session-wise, perturbation, temporal-shuffle, auxiliary BNCI2014-004, efficiency, and revision-control scripts, together with seed settings, split-assignment files, paper-ready tables, and a code-to-paper mapping document. The supporting package explicitly includes the tau topography artifacts under \texttt{supporting\_materials/tau\_analysis/} and the corresponding table under \texttt{supporting\_materials/paper\_tables/}. Raw MOABB dataset caches and full intermediate outputs are excluded from version control; they are regenerated locally by the scripts. The release also documents the exact commands used for smoke tests and full reproduction.
-
-\section*{ACKNOWLEDGMENT}
-The author would like to acknowledge the providers of the BCI Competition IV-2a dataset and BNCI2014-004 dataset for making their data publicly available. The author also used ChatGPT (OpenAI) to assist in improving the clarity and language of this manuscript. The author takes full responsibility for the content of this paper.
-
+\begingroup
+\scriptsize
 \bibliographystyle{IEEEtran}
 \bibliography{references}
+\endgroup
 
 
 \end{document}

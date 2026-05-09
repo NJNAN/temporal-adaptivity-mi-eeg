@@ -56,6 +56,33 @@ def load_core_module(repo_root: Path):
     return module
 
 
+def load_records(path: Path) -> List[Dict[str, object]]:
+    """读取断点 CSV；文件不存在时返回空表。"""
+    if not path.exists():
+        return []
+    return pd.read_csv(path).to_dict(orient="records")
+
+
+def completed_model_subjects(rows: List[Dict[str, object]]) -> set[tuple[int, str]]:
+    """从 session-wise metrics 中恢复已完成的 (subject, model)。"""
+    completed: set[tuple[int, str]] = set()
+    for row in rows:
+        subject = row.get("subject")
+        model = row.get("model")
+        accuracy = row.get("accuracy")
+        if subject is None or model is None or pd.isna(subject) or pd.isna(accuracy):
+            continue
+        completed.add((int(float(subject)), str(model)))
+    return completed
+
+
+def load_dataframe_if_exists(path: Path) -> pd.DataFrame | None:
+    """读取可选中间表，用于恢复 tau 分析。"""
+    if not path.exists():
+        return None
+    return pd.read_csv(path)
+
+
 @dataclass
 class SessionwiseConfig:
     """session-wise 主实验配置。
@@ -629,17 +656,36 @@ def run_sessionwise(config: SessionwiseConfig) -> Dict[str, object]:
     output_dir = repo_root / config.output_dir
     cache_dir = output_dir / "cache"
     output_dir.mkdir(parents=True, exist_ok=True)
+    fold_path = output_dir / "sessionwise_metrics.csv"
+    prediction_path = output_dir / "predictions.csv"
+    structured_path = output_dir / "structured_perturbation_metrics.csv"
+    tau_trial_progress_path = output_dir / "_progress_tau_trial_metrics.csv"
+    tau_timecourse_progress_path = output_dir / "_progress_tau_timecourse_metrics.csv"
+    tau_motor_trial_progress_path = output_dir / "_progress_tau_motor_trial_metrics.csv"
+    tau_motor_timecourse_progress_path = output_dir / "_progress_tau_motor_timecourse_metrics.csv"
 
-    rows: List[Dict[str, object]] = []
-    prediction_rows: List[Dict[str, object]] = []
+    rows: List[Dict[str, object]] = load_records(fold_path)
+    prediction_rows: List[Dict[str, object]] = load_records(prediction_path)
     parameter_counts: Dict[str, int] = {}
     tau_trial_tables: List[pd.DataFrame] = []
     tau_timecourse_tables: List[pd.DataFrame] = []
     tau_motor_trial_tables: List[pd.DataFrame] = []
     tau_motor_timecourse_tables: List[pd.DataFrame] = []
-    structured_rows: List[Dict[str, object]] = []
+    structured_rows: List[Dict[str, object]] = load_records(structured_path)
+    for path, target in [
+        (tau_trial_progress_path, tau_trial_tables),
+        (tau_timecourse_progress_path, tau_timecourse_tables),
+        (tau_motor_trial_progress_path, tau_motor_trial_tables),
+        (tau_motor_timecourse_progress_path, tau_motor_timecourse_tables),
+    ]:
+        existing_df = load_dataframe_if_exists(path)
+        if existing_df is not None and not existing_df.empty:
+            target.append(existing_df)
+    completed = completed_model_subjects(rows)
     total_runs = len(config.subjects) * len(config.models)
-    run_index = 0
+    run_index = len(completed)
+    if completed:
+        print(f"resuming session-wise from {len(completed)} completed runs in {fold_path}", flush=True)
 
     # 外层循环对应论文中的 9 个 subject。
     for subject in config.subjects:
@@ -685,6 +731,8 @@ def run_sessionwise(config: SessionwiseConfig) -> Dict[str, object]:
 
         # 模型循环对应论文 session-wise 主表中的全部 baseline。
         for model_name in config.models:
+            if (subject, model_name) in completed:
+                continue
             run_index += 1
             model_seed = config.seed + subject * 100 + config.models.index(model_name)
             module.seed_everything(model_seed)
@@ -817,12 +865,24 @@ def run_sessionwise(config: SessionwiseConfig) -> Dict[str, object]:
                             "seed": perturb_seed,
                             "accuracy": perturb_metrics["accuracy"],
                             "f1": perturb_metrics["f1"],
-                        }
-                    )
+                    }
+                )
+            completed.add((subject, model_name))
+            pd.DataFrame(rows).to_csv(fold_path, index=False)
+            pd.DataFrame(prediction_rows).to_csv(prediction_path, index=False)
+            if structured_rows:
+                pd.DataFrame(structured_rows).to_csv(structured_path, index=False)
+            if tau_trial_tables:
+                pd.concat(tau_trial_tables, ignore_index=True).to_csv(tau_trial_progress_path, index=False)
+            if tau_timecourse_tables:
+                pd.concat(tau_timecourse_tables, ignore_index=True).to_csv(tau_timecourse_progress_path, index=False)
+            if tau_motor_trial_tables:
+                pd.concat(tau_motor_trial_tables, ignore_index=True).to_csv(tau_motor_trial_progress_path, index=False)
+            if tau_motor_timecourse_tables:
+                pd.concat(tau_motor_timecourse_tables, ignore_index=True).to_csv(tau_motor_timecourse_progress_path, index=False)
 
     # 下方开始把原始 session-wise 结果整理成正文表格、tau 统计和 robustness 附件。
     subject_df, summary = summarize_subject_metrics(rows)
-    fold_path = output_dir / "sessionwise_metrics.csv"
     subject_df.to_csv(fold_path, index=False)
     prediction_df = pd.DataFrame(prediction_rows)
     module.save_prediction_artifacts(prediction_df, output_dir)

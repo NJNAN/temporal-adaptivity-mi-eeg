@@ -201,6 +201,8 @@ The manuscript currently reports that Shallow ConvNet and Riemann-TSLR form the 
 - stronger open-source reproducibility packaging
 - final-publication-status checks for arXiv references
 
+Important scope note: the current `MI-Mamba-style` baseline is a shared-protocol PyTorch surrogate, not a byte-for-byte reproduction of the original MI-Mamba CUDA implementation. Its selective-SSM block uses `d_model=64`, `d_state=16`, input-dependent `B/C` projections, a stable `A=-softplus(A_log)` parameterization, fixed-step exponential scanning, and temporal mean-plus-max pooling. The current Euclidean-alignment LOSO output is a Riemann-TSLR diagnostic only; a fully fair aligned LOSO comparison would need to apply the same unsupervised alignment/adaptation setting to the neural baselines as well.
+
 ## GitHub Upload Notes
 
 Before pushing, check what will be tracked:

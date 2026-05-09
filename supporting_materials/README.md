@@ -19,7 +19,7 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `scripts/`
   - Core scripts used to generate the results in this package, including the BNCI2014-004 auxiliary runner
 - `manuscript/`
-  - Current LaTeX draft and bibliography
+  - Current LaTeX draft, bibliography, and response-letter source/PDF
 
 ## Most important files
 
@@ -88,6 +88,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `tau_analysis/revision_tau_occlusion_channel_subject.csv`
 - `robustness/band_noise_accuracy_sweep.pdf`
 - `robustness/channel_dropout_accuracy_sweep.pdf`
+
+The tau topography file `tau_analysis/revision_tau_occlusion_topomap_global.pdf` is a channel-wise sensitivity map of hidden-state time constants. It should not be interpreted as electrode-specific learned tau parameters. The matching numeric summaries are `paper_tables/revision_tau_occlusion_channel_summary.csv` and `tau_analysis/revision_tau_occlusion_channel_subject.csv`.
 - `robustness/temporal_shuffle_drop.pdf`
 - `efficiency/benchmark.csv`
 - `reproducibility/seed_config.json`
@@ -99,6 +101,8 @@ This folder collects the evidence package for the current MI-EEG letter draft.
 - `reproducibility/bnci2014_004_results_summary.json`
 - `reproducibility/artifact_manifest.csv`
 - `manuscript/lnn_mi_eeg_paper.tex`
+- `manuscript/response_letter.tex`
+- `manuscript/response_letter.pdf`
 
 ## Notes
 

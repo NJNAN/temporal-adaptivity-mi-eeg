@@ -394,16 +394,16 @@ Import-Csv supporting_materials/reproducibility/artifact_manifest.csv | Measure-
 
 ## 6. 最终验收清单
 
-- [ ] `outputs/bspc_sessionwise_full_rerun/sessionwise_results_summary.json` 为 9 subjects、7 models、CUDA、80 epochs。
-- [ ] 新 session-wise 表不是随机水平，且含 7 个模型。
-- [ ] 新 tau 统计不是初始化值，且统计检验不再因 1 subject 出现全 NaN。
-- [ ] `dt/tau` ablation summary 为 27 行。
-- [ ] `revision_mamba_pooled` 的 config、summary、parameter_counts 一致。
-- [ ] LOSO Riemann 异常有代码复查记录，最好有 aligned Riemann control。
-- [ ] `outputs/paper_ready/` 从通过验收的结果重新生成。
-- [ ] `supporting_materials/` 与 paper-ready 结果同步。
-- [ ] `artifact_manifest.csv` 更新。
-- [ ] 论文正文和 response letter 只引用通过验收的表和图。
+- [x] `outputs/bspc_sessionwise_full_rerun/sessionwise_results_summary.json` 为 9 subjects、7 models、CUDA、80 epochs。
+- [x] 新 session-wise 表不是随机水平，且含 7 个模型。
+- [x] 新 tau 统计不是初始化值，且统计检验不再因 1 subject 出现全 NaN。
+- [x] `dt/tau` ablation summary 为 27 行。
+- [x] `revision_mamba_pooled` 的 config、summary、parameter_counts 一致。
+- [x] LOSO Riemann 异常有代码复查记录，并已有 aligned Riemann control。
+- [x] `outputs/paper_ready/` 从通过验收的结果重新生成。
+- [x] `supporting_materials/` 与 paper-ready 结果同步。
+- [x] `artifact_manifest.csv` 更新。
+- [x] 论文正文和 response letter 只引用通过验收的表和图。
 
 ## 8. 2026-05-09 full session-wise 补救结果
 

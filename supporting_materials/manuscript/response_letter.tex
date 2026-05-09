@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{xurl}
+\usepackage{microtype}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+% Lightweight point-by-point response layout, adapted from the public
+% Zenke Lab rebuttal/response-to-reviewers template style.
+\newcounter{reviewer}
+\newcounter{point}[reviewer]
+\renewcommand{\thepoint}{\thereviewer.\arabic{point}}
+\newcommand{\reviewersection}[1]{%
+  \stepcounter{reviewer}%
+  \setcounter{point}{0}%
+  \bigskip\hrule\medskip%
+  \section*{Reviewer #1}%
+}
+\newenvironment{reviewercomment}
+  {\refstepcounter{point}\medskip\noindent\textbf{Comment R\thepoint.}\itshape\ }
+  {\par}
+\newenvironment{response}
+  {\medskip\noindent\textbf{Response.}\ }
+  {\par\medskip}
+\newcommand{\changed}[1]{\textcolor{blue}{#1}}
+
+\begin{document}
+
+\begin{center}
+{\Large Response to the Reviewers}\\[0.5em]
+{\large Manuscript: \emph{On the Limits of Temporal Adaptivity in MI-EEG Decoding}}\\[0.25em]
+Junlin Huang
+\end{center}
+
+\noindent Dear Editor and Reviewers,
+
+\medskip
+\noindent Thank you for the careful assessment of the manuscript. We revised the paper to narrow the claim, add the missing controls requested by the reviewers, strengthen cross-subject and reproducibility evidence, and correct the publication status of several references. The revised claim is now explicitly scoped to standard cue-locked four-class MI decoding on IV-2a under the tested protocols. We no longer present the work as a universal statement about all MI paradigms or all temporal models.
+
+\medskip
+\noindent The main changes are:
+\begin{itemize}[leftmargin=1.5em]
+  \item Added MI-Mamba-style selective-SSM comparisons under pooled, grouped-pooled, session-wise, LOSO, and efficiency protocols.
+  \item Added leave-one-subject-out evaluation and a Riemannian Euclidean-alignment diagnostic.
+  \item Added channel-wise $\tau$ sensitivity/topography, with explicit wording that this is not electrode-specific learned $\tau$.
+  \item Added a full $3\times3\times3$ $\Delta t$/$\tau$-initialization ablation.
+  \item Added stronger spatial-spectral controls: SpatialSpectral-Head and SpatialSpectral-CfC.
+  \item Expanded reproducibility materials, including an environment checker, one-command revision runner, artifact manifest, fixed requirements, paper-ready tables, and supporting materials.
+  \item Rechecked preprint references and updated the manuscript bibliography accordingly.
+\end{itemize}
+
+\reviewersection{1}
+
+\begin{reviewercomment}
+No detailed comments were provided. The review form indicated marginal scope relevance, serious technical concerns, limited novelty and significance, major reference omissions, some references of limited relevance, and moderate exposition issues.
+\end{reviewercomment}
+
+\begin{response}
+We appreciate the assessment and revised the manuscript to address these global concerns directly. First, the scope has been narrowed throughout the abstract, introduction, and conclusion: the paper now makes a boundary claim for \emph{standard cue-locked four-class MI decoding}, not a universal claim about asynchronous MI, continuous control, or all temporal/SSM architectures. Second, the technical evidence has been strengthened by adding MI-Mamba-style, LOSO, $\tau$ topography, $\Delta t$/$\tau$ ablation, stronger spatial-spectral hybrid controls, and efficiency benchmarks. Third, novelty and significance are now framed as a controlled falsification study of the assumption that temporal adaptivity alone sets the performance ceiling, rather than as a new decoder architecture. Fourth, the reference list was updated: MI-Mamba is cited as a published article, EEGMamba is represented by the formally published Neural Networks 2025 article, the MOABB benchmark citation was corrected to Chevallier et al., Mamba was updated to COLM 2024, and EEG-TCNet was given its IEEE DOI. Finally, the response package now includes \path{REPRODUCIBILITY.md}, \path{scripts/check_environment.py}, \path{scripts/run_all_revision_experiments.ps1}, pinned \path{requirements.txt}, and \path{supporting_materials/reproducibility/artifact_manifest.csv}.
+\end{response}
+
+\reviewersection{2}
+
+\begin{reviewercomment}
+The study is confined to a standard four-class MI paradigm (IV-2a). The authors should acknowledge that the ``limits of temporal adaptivity'' might not hold for more complex, multi-class, or asynchronous MI paradigms where precise timing information could become more critical.
+\end{reviewercomment}
+
+\begin{response}
+We agree. The revised manuscript now explicitly limits the claim to standard cue-locked four-class MI decoding under the tested preprocessing and validation protocols. The conclusion states that asynchronous MI, continuous control, onset timing, and state-transition paradigms may rely more strongly on temporal adaptivity. We also revised the abstract and introduction to avoid implying a universal negative claim about temporal modeling.
+\end{response}
+
+\begin{reviewercomment}
+The manuscript mentions Mamba and ODE/CDE models but fails to include them in the comparison. Given that MI-Mamba is a contemporary hybrid model, its absence significantly weakens the claim that temporal models cannot compete with spatial ones. A head-to-head comparison with MI-Mamba or EEGMamba is necessary.
+\end{reviewercomment}
+
+\begin{response}
+We added a shared-protocol \textbf{MI-Mamba-style} selective-SSM baseline. It uses the same preprocessing, train-only normalization, validation, early stopping, and statistical testing as the other models. We describe it as a shared-protocol surrogate rather than a byte-for-byte reproduction of the original MI-Mamba implementation.
+
+In pooled evaluation, MI-Mamba-style reaches 59.0\% accuracy and 0.575 macro F1, improving the temporal-model tier but remaining below Shallow ConvNet (68.8\%) and Riemann-TSLR (68.3\%). In session-wise evaluation, it reaches 48.4\% accuracy and 0.447 macro F1, again below Riemann-TSLR (62.8\%) and Shallow ConvNet (59.5\%). In the grouped-pooled revision extension, it reaches 57.0\% accuracy and 0.554 macro F1, leading the revision-only grouped extension but remaining below the original grouped leaders Riemann-TSLR (67.8\%) and Shallow ConvNet (66.2\%). The conclusion has therefore been refined: modern SSMs improve the temporal tier, but the observed ceiling remains set by spatial/geometric priors in this protocol.
+\end{response}
+
+\begin{reviewercomment}
+All results are reported under within-subject settings. The authors should include cross-subject or leave-one-subject-out experiments.
+\end{reviewercomment}
+
+\begin{response}
+We added a leave-one-subject-out (LOSO) experiment. In each fold, one subject is held out for testing, normalization statistics are estimated only from training subjects, and validation is selected from the training subjects. In unaligned LOSO, EEGNet leads at 45.1\%, followed by Shallow ConvNet at 41.4\%, CfC-style at 39.8\%, LSTM at 39.2\%, MI-Mamba-style at 38.6\%, Tiny-Transformer at 38.0\%, and Riemann-TSLR at 34.2\%. Because Riemann-TSLR was unexpectedly low, we added an unsupervised Euclidean-alignment diagnostic; Riemann-TSLR rises from 34.2\% to 47.9\% with alignment (paired $p=0.001$). We therefore interpret LOSO as a subject-shift and alignment stress test, not as evidence for a temporal-model advantage.
+\end{response}
+
+\begin{reviewercomment}
+The analysis shows $\tau$ does not correlate with $\mu$/$\beta$ power. However, the authors should visualize $\tau$ topography (e.g., scalp maps of learned $\tau$) to demonstrate whether the model adapts differently over motor cortices versus peripheral channels.
+\end{reviewercomment}
+
+\begin{response}
+We added channel-wise $\tau$ sensitivity/topography. Because CfC-style $\tau$ is a hidden-state time constant rather than an electrode-specific learned parameter, the visualization is framed as \emph{channel-wise sensitivity of hidden-state $\tau$}, not as ``learned $\tau$ per electrode.'' The supporting materials now explicitly include \path{tau_analysis/revision_tau_occlusion_topomap_global.pdf}, \path{paper_tables/revision_tau_occlusion_channel_summary.csv}, and \path{tau_analysis/revision_tau_occlusion_channel_subject.csv}. The manuscript now states this interpretation directly.
+
+The regenerated analysis also changed the spectral wording: $\tau$ is strongly associated with $\mu$-band power ($r=0.792$, $p=8.95\times10^{-9}$) but not $\beta$-band power ($r=0.108$, $p=0.529$). We therefore no longer claim that $\tau$ is spectrally inert. Instead, $\tau$ appears to track part of the sensorimotor $\mu$-band state while not forming a stable class biomarker.
+\end{response}
+
+\begin{reviewercomment}
+The Hybrid-CfC variant is described as ``diagnostic'' but performs poorly. The authors should either justify why this minimal hybrid is sufficient for diagnosis or implement a more substantial hybrid architecture to truly test if combining spatial and temporal priors is synergistic.
+\end{reviewercomment}
+
+\begin{response}
+We did both. We clarified that the original Hybrid-CfC-style model is a minimal diagnostic baseline and should not be interpreted as evidence against all spatial-continuous hybrids. We also implemented two stronger spatial-spectral controls: \textbf{SpatialSpectral-Head}, a spatial-spectral frontend without CfC recurrence, and \textbf{SpatialSpectral-CfC}, the same frontend followed by a CfC backend.
+
+The results do not show synergy for the present CfC backend. SpatialSpectral-Head reaches 47.5\% pooled, 47.1\% grouped-pooled, and 44.6\% session-wise accuracy. SpatialSpectral-CfC reaches 42.1\% pooled, 40.4\% grouped-pooled, and 38.3\% session-wise accuracy. In the grouped extension, SpatialSpectral-Head exceeds SpatialSpectral-CfC after Holm correction ($p=0.025$). The manuscript now states that these results are specific to the tested CfC backend and should not be generalized to all spatial-continuous hybrid designs.
+\end{response}
+
+\begin{reviewercomment}
+The choice of $\Delta t=1.0$ is arbitrary. An ablation study varying $\Delta t$ and $\tau$ initialization strategies would clarify whether the model's failure is due to poor hyperparameter tuning rather than a fundamental limitation.
+\end{reviewercomment}
+
+\begin{response}
+We completed a $3\times3\times3$ ablation over $\Delta t\in\{0.5,1.0,2.0\}$, $\tau_{\mathrm{init}}\in\{0.5,1.0,2.0\}$, and models \{CfC-style, Hybrid-CfC-style, SpatialSpectral-CfC\}. The best pure CfC-style setting reaches 45.6\% accuracy at $\Delta t=2.0$, $\tau_{\mathrm{init}}=0.5$, essentially matching the regenerated default session-wise CfC-style result (45.1\%). Hybrid-CfC-style is more sensitive and reaches 52.2\% at $\Delta t=0.5$, $\tau_{\mathrm{init}}=2.0$, but remains below the Shallow ConvNet and Riemann-TSLR session-wise leaders. SpatialSpectral-CfC peaks at 39.1\%. These results are reported in the manuscript, and heatmaps are included as \path{tau_analysis/revision_cfc_dt_tau_accuracy_heatmap.pdf} and \path{tau_analysis/revision_cfc_dt_tau_f1_heatmap.pdf}.
+\end{response}
+
+\begin{reviewercomment}
+Reproducibility is a major concern for a methods-focused letter.
+\end{reviewercomment}
+
+\begin{response}
+We expanded the reproducibility package substantially. The repository now includes \path{README.md}, \path{REPRODUCIBILITY.md}, pinned \path{requirements.txt}, \path{scripts/check_environment.py}, \path{scripts/run_all_revision_experiments.ps1}, train/test split assignment files, seed configuration, paper-ready tables, supporting materials, and an artifact manifest with hashes. The manuscript includes a dedicated reproducibility and code availability section.
+\end{response}
+
+\begin{reviewercomment}
+Some arXiv preprints should be checked for final publication status if possible.
+\end{reviewercomment}
+
+\begin{response}
+We rechecked the preprint-sensitive references. MI-Mamba is cited as a published article. Gui et al.'s \emph{EEGMamba: Bidirectional State Space Model with Mixture of Experts for EEG Multi-task Classification} remains an arXiv/OpenReview submission, so the manuscript now cites the formally published Neural Networks 2025 EEGMamba foundation-model article where an EEGMamba reference is needed. The MOABB benchmark citation was corrected to Chevallier et al. and retained as the HAL/arXiv working-paper citation used by the MOABB documentation. Mamba was updated to a COLM 2024 conference entry, and EEG-TCNet now includes its IEEE DOI.
+\end{response}
+
+\bigskip
+\noindent We hope these revisions address the reviewers' concerns and make the scope, evidence, and reproducibility of the manuscript clearer.
+
+\medskip
+\noindent Sincerely,\\
+Junlin Huang
+
+\end{document}

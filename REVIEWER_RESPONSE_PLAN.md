@@ -482,13 +482,13 @@ python scripts/run_cfc_dt_tau_ablation.py --models cfc hybrid_cfc --dt-values 0.
 
 ## 11. 验收清单
 
-- [ ] `MI-Mamba-style` 在 pooled、grouped、session-wise 至少三种协议下完成。
-- [ ] LOSO/cross-subject 完成，输出 subject-level 表和统计检验。
-- [ ] `tau` topography 完成，并在图注中说明是 channel-wise tau attribution/sensitivity。
-- [ ] `Delta t/tau_init` sweep 完成，能回答是否因超参导致 CfC 失败。
-- [ ] 当前 Hybrid-CfC 的定位被修正，或新增 strong hybrid 对照。
-- [ ] README、requirements、environment check、run commands、artifact manifest 完成。
+- [x] `MI-Mamba-style` 在 pooled、grouped、session-wise 至少三种协议下完成。
+- [x] LOSO/cross-subject 完成，输出 subject-level 表和统计检验。
+- [x] `tau` topography 完成，并在图注中说明是 channel-wise tau attribution/sensitivity。
+- [x] `Delta t/tau_init` sweep 完成，能回答是否因超参导致 CfC 失败。
+- [x] 当前 Hybrid-CfC 的定位被修正，或新增 strong hybrid 对照。
+- [x] README、requirements、environment check、run commands、artifact manifest 完成。
 - [x] `references.bib` 中 Mamba、EEG-TCNet、MOABB/EEGMamba 等状态复核完成。
-- [ ] 论文结论收缩到 cue-locked IV-2a / current protocol 范围。
-- [ ] supporting materials 同步更新。
-- [ ] response letter 能逐条引用新增表格、图和文件。
+- [x] 论文结论收缩到 cue-locked IV-2a / current protocol 范围。
+- [x] supporting materials 同步更新。
+- [x] response letter 能逐条引用新增表格、图和文件。

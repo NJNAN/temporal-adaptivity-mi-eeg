@@ -1,11 +1,13 @@
-numpy
-pandas
-scipy
-scikit-learn
-matplotlib
-seaborn
-torch
-moabb
-mne
-pyriemann
-reportlab
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+scikit-learn==1.8.0
+matplotlib==3.10.9
+seaborn==0.13.2
+torch==2.11.0+cu128
+moabb==1.5.0
+mne==1.12.1
+pyriemann==0.11
+reportlab==4.5.0
